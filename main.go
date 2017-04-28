@@ -41,13 +41,11 @@ func main() {
 	app.Action = func() {
 		log.Infof("System code: %s, App Name: %s, Port: %s", *appSystemCode, *appName, *port)
 
-		go func() {
-			serveAdminEndpoints(*appSystemCode, *appName, *port)
-		}()
+		serveAdminEndpoints(*appSystemCode, *appName, *port)
 
 		// todo: insert app code here
 
-		waitForSignal()
+		waitForSignals()
 	}
 	err := app.Run(os.Args)
 	if err != nil {
@@ -71,7 +69,7 @@ func serveAdminEndpoints(appSystemCode string, appName string, port string) {
 	}
 }
 
-func waitForSignal() {
+func waitForSignals() {
 	ch := make(chan os.Signal)
 	signal.Notify(ch, syscall.SIGINT, syscall.SIGTERM)
 	<-ch

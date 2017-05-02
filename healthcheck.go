@@ -15,7 +15,6 @@ type healthService struct {
 type healthConfig struct {
 	appSystemCode string
 	appName       string
-	port          string
 }
 
 func newHealthService(config *healthConfig) *healthService {

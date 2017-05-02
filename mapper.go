@@ -2,11 +2,10 @@ package main
 
 import (
 	"net/http"
-	"io/ioutil"
 	"encoding/json"
-	"io"
 )
 
+// Mapper is the main mapper here. I had to comment this line (gometalinter.v1)
 type Mapper struct {}
 
 func (m Mapper) mapArticleImageSets(w http.ResponseWriter, r *http.Request) {
@@ -19,13 +18,14 @@ func (m Mapper) mapArticleImageSets(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		panic(err)
 	}
-	defer r.Body.Close()
-	w.Write([]byte(native.Value))
-}
-
-func nicely(resp *http.Response) {
-	_, err := io.Copy(ioutil.Discard, resp.Body)
+	defer func() {
+		errClose := r.Body.Close()
+		if errClose != nil {
+			panic(errClose)
+		}
+	}()
+	_, err = w.Write([]byte(native.Value))
 	if err != nil {
-		//log.Warningf("[%v]", err)
+		panic(err)
 	}
 }

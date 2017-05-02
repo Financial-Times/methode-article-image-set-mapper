@@ -67,7 +67,7 @@ func routeAdminEndpoints(router *mux.Router, appSystemCode string, appName strin
 }
 
 func waitForSignals() {
-	ch := make(chan os.Signal)
+	ch := make(chan os.Signal, 1)
 	signal.Notify(ch, syscall.SIGINT, syscall.SIGTERM)
 	<-ch
 }

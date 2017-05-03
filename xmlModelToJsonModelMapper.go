@@ -1,23 +1,17 @@
 package main
 
-type JsonImageSet struct {
-	Uuid string `json:"uuid"`
-	Members []Member `json:"members"`
+type XmlImageSetToJsonMapper interface {
+	Map(xmlImageSets []XmlImageSet) ([]JsonImageSet, error)
 }
 
-type Member struct {
-	Uuid string `json:"uuid"`
-}
+type defaultImageSetToJsonMapper struct {}
 
-type XmlModelToJsonModelMapper struct {
-}
-
-func (m XmlModelToJsonModelMapper) mapp(xmlImageSets []ImageSet) ([]JsonImageSet, error) {
+func (m defaultImageSetToJsonMapper) Map(xmlImageSets []XmlImageSet) ([]JsonImageSet, error) {
 	jsonImageSets := make([]JsonImageSet, 0)
 	for _, xmlImageSet := range xmlImageSets {
-		members := []Member {
-			m.mapMember(xmlImageSet.ImageLarge),
+		members := []JsonMember{
 			m.mapMember(xmlImageSet.ImageMedium),
+			m.mapMember(xmlImageSet.ImageLarge),
 			m.mapMember(xmlImageSet.ImageSmall),
 		}
 		jsonImageSet := JsonImageSet {
@@ -29,8 +23,8 @@ func (m XmlModelToJsonModelMapper) mapp(xmlImageSets []ImageSet) ([]JsonImageSet
 	return jsonImageSets, nil
 }
 
-func (m XmlModelToJsonModelMapper) mapMember(xmlImage Image) Member {
-	return Member{
+func (m defaultImageSetToJsonMapper) mapMember(xmlImage XmlImage) JsonMember {
+	return JsonMember{
 		Uuid: xmlImage.FileRef,
 	}
 }

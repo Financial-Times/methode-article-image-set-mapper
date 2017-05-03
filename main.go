@@ -3,7 +3,7 @@ package main
 import (
 	health "github.com/Financial-Times/go-fthealth/v1_1"
 	status "github.com/Financial-Times/service-status-go/httphandlers"
-	log "github.com/Sirupsen/logrus"
+	"github.com/Sirupsen/logrus"
 	"github.com/jawher/mow.cli"
 	"net/http"
 	"os"
@@ -33,27 +33,25 @@ func main() {
 		Desc:   "Port to listen on",
 		EnvVar: "APP_PORT",
 	})
-	log.SetLevel(log.InfoLevel)
-	log.Infof("[Startup] methode-article-image-set-mapper is starting ")
+	logrus.Infof("methode-article-image-set-mapper is starting...\n")
 	app.Action = func() {
-		log.Infof("System code: %s, App Name: %s, Port: %s", *appSystemCode, *appName, *port)
+		logrus.Infof("systemCode=%s appName=%s port=%s", *appSystemCode, *appName, *port)
 		router := mux.NewRouter()
 		routeProductionEndpoints(router)
 		routeAdminEndpoints(router, *appSystemCode, *appName)
 		if err := http.ListenAndServe(":"+*port, router); err != nil {
-			log.Fatalf("Unable to start: %v", err)
+			logrus.Fatalf("Cound't serve http endpoints. %v\n", err)
 		}
 		waitForSignals()
 	}
 	err := app.Run(os.Args)
 	if err != nil {
-		log.Errorf("App could not start, error=[%s]\n", err)
-		return
+		logrus.Fatalf("methode-article-image-set-mapper could not start. %v\n", err)
 	}
 }
 
 func routeProductionEndpoints(router *mux.Router) {
-	mapperService := Mapper{}
+	mapperService := newMapper()
 	router.Path("/map").Handler(handlers.MethodHandler{"POST": http.HandlerFunc(mapperService.mapArticleImageSets)})
 }
 

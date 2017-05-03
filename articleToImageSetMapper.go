@@ -6,12 +6,12 @@ import (
 )
 
 type ArticleToImageSetMapper interface {
-	Map(source []byte) ([]XmlImageSet, error)
+	Map(source []byte) ([]XMLImageSet, error)
 }
 
 type defaultArticleToImageSetMapper struct {}
 
-func (m defaultArticleToImageSetMapper) Map(source []byte) ([]XmlImageSet, error) {
+func (m defaultArticleToImageSetMapper) Map(source []byte) ([]XMLImageSet, error) {
 	var article xmlArticle
 	err := xml.Unmarshal(source, &article)
 	if err != nil {

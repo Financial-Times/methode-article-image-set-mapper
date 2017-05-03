@@ -11,16 +11,15 @@ type ImageSetMapper interface {
 	Map(source []byte) ([]byte, error)
 }
 
-// ImageSetMapper is the main mapper here. I had to comment this line because of gometalinter.
 type defaultImageSetMapper struct {
 	xmlMapper ArticleToImageSetMapper
-	xmlToJson XmlImageSetToJsonMapper
+	xmlToJSON XMLImageSetToJSONMapper
 }
 
 func newImageSetMapper() ImageSetMapper {
 	return defaultImageSetMapper {
 		xmlMapper: defaultArticleToImageSetMapper{},
-		xmlToJson: defaultImageSetToJsonMapper{},
+		xmlToJSON: defaultImageSetToJSONMapper{},
 	}
 }
 
@@ -46,18 +45,23 @@ func (m defaultImageSetMapper) Map(source []byte) ([]byte, error) {
 
 	xmlImageSets, err := m.xmlMapper.Map(xmlDocument)
 	if err != nil {
-		msg := fmt.Errorf("Couldn't map ImageSets. %v\n", err)
+		msg := fmt.Errorf("Couldn't parse XML document. %v\n", err)
 		logrus.Warn(msg)
 		return nil, msg
 	}
 
-	jsonImageSets, err := m.xmlToJson.Map(xmlImageSets)
+	jsonImageSets, err := m.xmlToJSON.Map(xmlImageSets)
+	if err != nil {
+		msg := fmt.Errorf("Couldn't map ImageSets from model soruced from XML to model targeted for JSON. %v\n", err)
+		logrus.Warn(msg)
+		return nil, msg
+	}
 
-	marshaledJsonImageSets, err := json.Marshal(jsonImageSets)
+	marshaledJSONImageSets, err := json.Marshal(jsonImageSets)
 	if err != nil {
 		msg := fmt.Errorf("Couldn't marshall built-up image-sets to JSON. %v\n", err)
 		logrus.Warn(msg)
 		return nil, msg
 	}
-	return marshaledJsonImageSets, nil
+	return marshaledJSONImageSets, nil
 }

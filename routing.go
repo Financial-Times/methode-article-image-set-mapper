@@ -22,7 +22,7 @@ func newRouting(mapperService ImageSetMapper, appSystemCode string, appName stri
 }
 
 func (r routing) routeProductionEndpoints(mapperService ImageSetMapper) {
-	httpMappingHandler := newHttpMappingHandler(mapperService)
+	httpMappingHandler := newHTTPMappingHandler(mapperService)
 	r.router.Path("/map").Handler(handlers.MethodHandler{"POST": http.HandlerFunc(httpMappingHandler.handle)})
 }
 
@@ -36,9 +36,5 @@ func (r routing) routeAdminEndpoints(appSystemCode string, appName string) {
 }
 
 func (r routing) listenAndServe(port string) error {
-	err := http.ListenAndServe(":"+port, r.router)
-	if err != nil {
-		return err
-	}
-	return nil
+	return http.ListenAndServe(":"+port, r.router)
 }

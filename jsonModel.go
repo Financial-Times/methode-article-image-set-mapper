@@ -1,10 +1,10 @@
 package main
 
-type JsonImageSet struct {
-	Uuid string `json:"uuid"`
-	Members []JsonMember `json:"members"`
+type JSONImageSet struct {
+	UUID    string `json:"uuid"`
+	Members []JSONMember `json:"members"`
 }
 
-type JsonMember struct {
-	Uuid string `json:"uuid"`
+type JSONMember struct {
+	UUID string `json:"uuid"`
 }

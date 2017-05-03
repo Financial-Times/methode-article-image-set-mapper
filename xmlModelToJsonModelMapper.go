@@ -1,21 +1,21 @@
 package main
 
-type XmlImageSetToJsonMapper interface {
-	Map(xmlImageSets []XmlImageSet) ([]JsonImageSet, error)
+type XMLImageSetToJSONMapper interface {
+	Map(xmlImageSets []XMLImageSet) ([]JSONImageSet, error)
 }
 
-type defaultImageSetToJsonMapper struct {}
+type defaultImageSetToJSONMapper struct {}
 
-func (m defaultImageSetToJsonMapper) Map(xmlImageSets []XmlImageSet) ([]JsonImageSet, error) {
-	jsonImageSets := make([]JsonImageSet, 0)
+func (m defaultImageSetToJSONMapper) Map(xmlImageSets []XMLImageSet) ([]JSONImageSet, error) {
+	jsonImageSets := make([]JSONImageSet, 0)
 	for _, xmlImageSet := range xmlImageSets {
-		members := []JsonMember{
+		members := []JSONMember{
 			m.mapMember(xmlImageSet.ImageMedium),
 			m.mapMember(xmlImageSet.ImageLarge),
 			m.mapMember(xmlImageSet.ImageSmall),
 		}
-		jsonImageSet := JsonImageSet {
-			Uuid: xmlImageSet.Id,
+		jsonImageSet := JSONImageSet{
+			UUID:    xmlImageSet.ID,
 			Members: members,
 		}
 		jsonImageSets = append(jsonImageSets, jsonImageSet)
@@ -23,8 +23,8 @@ func (m defaultImageSetToJsonMapper) Map(xmlImageSets []XmlImageSet) ([]JsonImag
 	return jsonImageSets, nil
 }
 
-func (m defaultImageSetToJsonMapper) mapMember(xmlImage XmlImage) JsonMember {
-	return JsonMember{
-		Uuid: xmlImage.FileRef,
+func (m defaultImageSetToJSONMapper) mapMember(xmlImage XMLImage) JSONMember {
+	return JSONMember{
+		UUID: xmlImage.FileRef,
 	}
 }

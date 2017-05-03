@@ -8,16 +8,16 @@ type xmlArticle struct {
 }
 
 type xmlBody struct {
-	ImageSets []XmlImageSet `xml:"image-set"`
+	ImageSets []XMLImageSet `xml:"image-set"`
 }
 
-type XmlImageSet struct {
-	Id          string `xml:"id,attr"`
-	ImageSmall  XmlImage `xml:"image-small"`
-	ImageMedium XmlImage `xml:"image-medium"`
-	ImageLarge  XmlImage `xml:"image-large"`
+type XMLImageSet struct {
+	ID          string `xml:"id,attr"`
+	ImageSmall  XMLImage `xml:"image-small"`
+	ImageMedium XMLImage `xml:"image-medium"`
+	ImageLarge  XMLImage `xml:"image-large"`
 }
 
-type XmlImage struct {
+type XMLImage struct {
 	FileRef string `xml:"fileref,attr"`
 }

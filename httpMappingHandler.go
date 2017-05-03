@@ -12,60 +12,63 @@ type ErrorMessage struct {
 	Message string `json:"message"`
 }
 
-func NewHttpErrorMessage(msg string) ErrorMessage {
+func NewHTTPErrorMessage(msg string) ErrorMessage {
 	return ErrorMessage{Message: msg}
 }
 
-type HttpMappingHandler struct {
+type HTTPMappingHandler struct {
 	imageSetMapper ImageSetMapper
 }
 
-func newHttpMappingHandler(imageSetMapper ImageSetMapper) HttpMappingHandler {
-	return HttpMappingHandler{
+func newHTTPMappingHandler(imageSetMapper ImageSetMapper) HTTPMappingHandler {
+	return HTTPMappingHandler{
 		imageSetMapper: imageSetMapper,
 	}
 }
 
-func (h HttpMappingHandler) handle(w http.ResponseWriter, r *http.Request) {
+func (h HTTPMappingHandler) handle(w http.ResponseWriter, r *http.Request) {
 	body, err := ioutil.ReadAll(r.Body)
 	defer h.closeResponseBody(r)
 	if err != nil {
-		h.warnAndWriteToHttp500(fmt.Sprintf("Cound't read from request body. %v\n", err), w)
+		h.warnAndWriteToHTTP500(fmt.Sprintf("Cound't read from request body. %v\n", err), w)
 		return
 	}
 
-	marshaledJsonImageSets, err := h.imageSetMapper.Map(body)
+	marshaledJSONImageSets, err := h.imageSetMapper.Map(body)
 	if err != nil {
-		h.writeToHttp500(fmt.Sprintf("Error mapping the given content. %v\n", err), w)
+		h.writeToHTTP500(fmt.Sprintf("Error mapping the given content. %v\n", err), w)
 		return
 	}
 
 	w.Header().Add("Content-Type", "application/json;charset=utf-8")
-	_, err = w.Write(marshaledJsonImageSets)
+	_, err = w.Write(marshaledJSONImageSets)
 	if err != nil {
-		h.warnAndWriteToHttp500(fmt.Sprintf("Cound't write response. %v\n", err), w)
+		h.warnAndWriteToHTTP500(fmt.Sprintf("Cound't write response. %v\n", err), w)
 	}
 }
 
-func (h HttpMappingHandler) warnAndWriteToHttp500(msg string, w http.ResponseWriter) {
+func (h HTTPMappingHandler) warnAndWriteToHTTP500(msg string, w http.ResponseWriter) {
 	logrus.Warn(msg)
-	h.writeToHttp500(msg, w)
+	h.writeToHTTP500(msg, w)
 }
 
-func (h HttpMappingHandler) writeToHttp500(msg string, w http.ResponseWriter) {
-	httpMsg, marshalErr := json.Marshal(NewHttpErrorMessage(msg))
+func (h HTTPMappingHandler) writeToHTTP500(msg string, w http.ResponseWriter) {
+	httpMsg, marshalErr := json.Marshal(NewHTTPErrorMessage(msg))
 	if marshalErr != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 	w.Header().Add("Content-Type", "application/json;charset=utf-8")
 	w.WriteHeader(http.StatusInternalServerError)
-	w.Write(httpMsg)
+	_, err := w.Write(httpMsg)
+	if err != nil {
+		logrus.Warn("Couldn't write to response. %v\n", err)
+	}
 }
 
-func (h HttpMappingHandler) closeResponseBody(r *http.Request) {
+func (h HTTPMappingHandler) closeResponseBody(r *http.Request) {
 	err := r.Body.Close()
 	if err != nil {
-		logrus.Warnf("Cound't close request body. %v\n", err)
+		logrus.Warnf("Coulnd't close request body. %v\n", err)
 	}
 }

@@ -4,7 +4,7 @@ import "encoding/xml"
 
 type xmlArticle struct {
 	XMLName xml.Name `xml:"doc"`
-	Body    xmlBody `xml:"story>text>body"`
+	Body    xmlBody  `xml:"story>text>body"`
 }
 
 type xmlBody struct {
@@ -12,7 +12,7 @@ type xmlBody struct {
 }
 
 type XMLImageSet struct {
-	ID          string `xml:"id,attr"`
+	ID          string   `xml:"id,attr"`
 	ImageSmall  XMLImage `xml:"image-small"`
 	ImageMedium XMLImage `xml:"image-medium"`
 	ImageLarge  XMLImage `xml:"image-large"`

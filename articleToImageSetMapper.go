@@ -9,7 +9,7 @@ type ArticleToImageSetMapper interface {
 	Map(source []byte) ([]XMLImageSet, error)
 }
 
-type defaultArticleToImageSetMapper struct {}
+type defaultArticleToImageSetMapper struct{}
 
 func (m defaultArticleToImageSetMapper) Map(source []byte) ([]XMLImageSet, error) {
 	var article xmlArticle

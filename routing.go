@@ -1,10 +1,10 @@
 package main
 
 import (
-	"github.com/gorilla/mux"
-	"github.com/gorilla/handlers"
 	health "github.com/Financial-Times/go-fthealth/v1_1"
 	status "github.com/Financial-Times/service-status-go/httphandlers"
+	"github.com/gorilla/handlers"
+	"github.com/gorilla/mux"
 	"net/http"
 )
 

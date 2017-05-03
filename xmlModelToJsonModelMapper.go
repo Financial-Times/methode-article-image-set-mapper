@@ -4,7 +4,7 @@ type XMLImageSetToJSONMapper interface {
 	Map(xmlImageSets []XMLImageSet) ([]JSONImageSet, error)
 }
 
-type defaultImageSetToJSONMapper struct {}
+type defaultImageSetToJSONMapper struct{}
 
 func (m defaultImageSetToJSONMapper) Map(xmlImageSets []XMLImageSet) ([]JSONImageSet, error) {
 	jsonImageSets := make([]JSONImageSet, 0)

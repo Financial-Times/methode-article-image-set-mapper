@@ -1,10 +1,10 @@
 package main
 
 import (
-	"encoding/json"
-	"github.com/Sirupsen/logrus"
 	"encoding/base64"
+	"encoding/json"
 	"fmt"
+	"github.com/Sirupsen/logrus"
 )
 
 type ImageSetMapper interface {
@@ -17,7 +17,7 @@ type defaultImageSetMapper struct {
 }
 
 func newImageSetMapper() ImageSetMapper {
-	return defaultImageSetMapper {
+	return defaultImageSetMapper{
 		xmlMapper: defaultArticleToImageSetMapper{},
 		xmlToJSON: defaultImageSetToJSONMapper{},
 	}

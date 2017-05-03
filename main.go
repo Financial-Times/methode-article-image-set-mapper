@@ -1,7 +1,6 @@
 package main
 
 import (
-
 	"github.com/Sirupsen/logrus"
 	"github.com/jawher/mow.cli"
 	"os"
@@ -31,8 +30,8 @@ func main() {
 
 type args struct {
 	appSystemCode string
-	appName string
-	port string
+	appName       string
+	port          string
 }
 
 func resolveArgs(app *cli.Cli) args {
@@ -54,10 +53,10 @@ func resolveArgs(app *cli.Cli) args {
 		Desc:   "Port to listen on",
 		EnvVar: "APP_PORT",
 	})
-	return args {
+	return args{
 		appSystemCode: *appSystemCode,
-		appName: *appName,
-		port: *port,
+		appName:       *appName,
+		port:          *port,
 	}
 }
 

@@ -1,11 +1,11 @@
 package main
 
 import (
-	"net/http"
-	"io/ioutil"
+	"encoding/json"
 	"fmt"
 	"github.com/Sirupsen/logrus"
-	"encoding/json"
+	"io/ioutil"
+	"net/http"
 )
 
 type ErrorMessage struct {

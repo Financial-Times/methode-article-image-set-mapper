@@ -8,7 +8,8 @@ import (
 )
 
 type ImageSetMapper interface {
-	Map(source []byte) ([]byte, error)
+	Map(source []byte) ([]JSONImageSet, error)
+	MapToJson(source []byte) ([]byte, error)
 }
 
 type defaultImageSetMapper struct {
@@ -27,7 +28,7 @@ type NativeContent struct {
 	Value string `json:"value"`
 }
 
-func (m defaultImageSetMapper) Map(source []byte) ([]byte, error) {
+func (m defaultImageSetMapper) Map(source []byte) ([]JSONImageSet, error) {
 	var native NativeContent
 	err := json.Unmarshal(source, &native)
 	if err != nil {
@@ -55,6 +56,14 @@ func (m defaultImageSetMapper) Map(source []byte) ([]byte, error) {
 		msg := fmt.Errorf("Couldn't map ImageSets from model soruced from XML to model targeted for JSON. %v\n", err)
 		logrus.Warn(msg)
 		return nil, msg
+	}
+	return jsonImageSets, nil
+}
+
+func (m defaultImageSetMapper) MapToJson(source []byte) ([]byte, error) {
+	jsonImageSets, err := m.Map(source)
+	if err != nil {
+		return nil, err
 	}
 
 	marshaledJSONImageSets, err := json.Marshal(jsonImageSets)

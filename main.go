@@ -21,11 +21,7 @@ func main() {
 		logrus.Infof("methode-article-image-set-mapper is starting systemCode=%s appName=%s port=%s", args.appSystemCode, args.appName, args.port)
 
 		mapperService := newImageSetMapper()
-
 		newQueue(args)
-
-		InfoLogger.Println(prettyPrintConfig(consumerConfig, producerConfig))
-
 		routing := newRouting(mapperService, args.appSystemCode, args.appName)
 		err := routing.listenAndServe(args.port)
 		if err != nil {

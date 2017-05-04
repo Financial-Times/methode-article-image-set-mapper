@@ -10,6 +10,7 @@ import (
 	"encoding/json"
 	"bytes"
 	"fmt"
+	"net"
 )
 
 const (
@@ -26,7 +27,19 @@ type queue struct {
 	imageSetMapper ImageSetMapper
 }
 
-func newQueue(args args, httpClient *http.Client) queue {
+func newQueue(args args, imageSetMapper ImageSetMapper) queue {
+	httpClient := http.Client{
+		Transport: &http.Transport{
+			Proxy: http.ProxyFromEnvironment,
+			DialContext: (&net.Dialer{
+				Timeout:   30 * time.Second,
+				KeepAlive: 30 * time.Second,
+			}).DialContext,
+			MaxIdleConnsPerHost:   20,
+			TLSHandshakeTimeout:   3 * time.Second,
+			ExpectContinueTimeout: 1 * time.Second,
+		},
+	}
 	queue := queue{
 		consumerConfig: consumer.QueueConfig{
 			Addrs:                args.addresses,
@@ -43,10 +56,12 @@ func newQueue(args args, httpClient *http.Client) queue {
 			Queue:         args.writeQueue,
 			Authorization: args.authorization,
 		},
+		imageSetMapper: imageSetMapper,
 	}
-	messageConsumer := consumer.NewConsumer(queue.consumerConfig, queue.onMessage, httpClient)
+	queue.prettyPrintConfig()
+	messageConsumer := consumer.NewConsumer(queue.consumerConfig, queue.onMessage, &httpClient)
 	queue.messageConsumer = messageConsumer
-	messageProducer := producer.NewMessageProducerWithHTTPClient(queue.producerConfig, httpClient)
+	messageProducer := producer.NewMessageProducerWithHTTPClient(queue.producerConfig, &httpClient)
 	queue.messageProducer = messageProducer
 	return queue
 }
@@ -119,20 +134,33 @@ func (q queue) buildMessage(imageSet JSONImageSet, lastModified, pubRef string) 
 		Payload:      imageSet,
 		LastModified: lastModified,
 	}
-	marshaledBody, err := unsafeJSONMarshal(body)
+	marshaledBody, err := q.unsafeJSONMarshal(body)
 	if err != nil {
 		return producer.Message{}, fmt.Errorf("Couldn't marshall message body to JSON skipping message. transactionId=%v %v", pubRef, body)
 	}
 	return producer.Message{Headers: headers, Body: string(marshaledBody)}, nil
 }
 
-func unsafeJSONMarshal(v interface{}) ([]byte, error) {
+func (q queue) unsafeJSONMarshal(v interface{}) ([]byte, error) {
 	b, err := json.Marshal(v)
 	if err != nil {
 		return nil, err
 	}
 	b = bytes.Replace(b, []byte("\\u003c"), []byte("<"), -1)
 	b = bytes.Replace(b, []byte("\\u003e"), []byte(">"), -1)
-
 	return b, nil
+}
+
+func (q queue) prettyPrintConfig(c consumer.QueueConfig, p producer.MessageProducerConfig) string {
+	return fmt.Sprintf("Config: [\n\t%s\n\t%s\n]", q.prettyPrintConsumerConfig(), q.prettyPrintProducerConfig())
+}
+
+func (q queue) prettyPrintConsumerConfig() string {
+	return fmt.Sprintf("consumerConfig: [\n\t\taddr: [%v]\n\t\tgroup: [%v]\n\t\ttopic: [%v]\n\t\treadQueueHeader: [%v]\n\t]",
+		q.consumerConfig.Addrs, q.consumerConfig.Group, q.consumerConfig.Topic, q.consumerConfig.Queue)
+}
+
+func (q queue) prettyPrintProducerConfig() string {
+	return fmt.Sprintf("producerConfig: [\n\t\taddr: [%v]\n\t\ttopic: [%v]\n\t\twriteQueueHeader: [%v]\n\t]",
+		q.producerConfig.Addr, q.producerConfig.Topic, q.producerConfig.Queue)
 }

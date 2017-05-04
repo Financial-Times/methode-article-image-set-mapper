@@ -151,7 +151,7 @@ func (q queue) unsafeJSONMarshal(v interface{}) ([]byte, error) {
 	return b, nil
 }
 
-func (q queue) prettyPrintConfig(c consumer.QueueConfig, p producer.MessageProducerConfig) string {
+func (q queue) prettyPrintConfig() string {
 	return fmt.Sprintf("Config: [\n\t%s\n\t%s\n]", q.prettyPrintConsumerConfig(), q.prettyPrintProducerConfig())
 }
 

@@ -6,9 +6,6 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
-
-	"github.com/Financial-Times/message-queue-go-producer/producer"
-	"github.com/Financial-Times/message-queue-gonsumer/consumer"
 )
 
 func main() {
@@ -21,7 +18,7 @@ func main() {
 		logrus.Infof("methode-article-image-set-mapper is starting systemCode=%s appName=%s port=%s", args.appSystemCode, args.appName, args.port)
 
 		mapperService := newImageSetMapper()
-		newQueue(args)
+		newQueue(args, mapperService)
 		routing := newRouting(mapperService, args.appSystemCode, args.appName)
 		err := routing.listenAndServe(args.port)
 		if err != nil {

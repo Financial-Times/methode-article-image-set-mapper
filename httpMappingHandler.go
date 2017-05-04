@@ -34,9 +34,15 @@ func (h HTTPMappingHandler) handle(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	marshaledJSONImageSets, err := h.imageSetMapper.MapToJson(body)
+	imageSets, err := h.imageSetMapper.Map(body)
 	if err != nil {
 		h.writeToHTTP500(fmt.Sprintf("Error mapping the given content. %v\n", err), w)
+		return
+	}
+
+	marshaledJSONImageSets, err := json.Marshal(imageSets)
+	if err != nil {
+		h.warnAndWriteToHTTP500(fmt.Sprintf("Couldn't marshall built-up image-sets to JSON. %v\n", err), w)
 		return
 	}
 

@@ -9,7 +9,6 @@ import (
 
 type ImageSetMapper interface {
 	Map(source []byte) ([]JSONImageSet, error)
-	MapToJson(source []byte) ([]byte, error)
 }
 
 type defaultImageSetMapper struct {
@@ -58,19 +57,4 @@ func (m defaultImageSetMapper) Map(source []byte) ([]JSONImageSet, error) {
 		return nil, msg
 	}
 	return jsonImageSets, nil
-}
-
-func (m defaultImageSetMapper) MapToJson(source []byte) ([]byte, error) {
-	jsonImageSets, err := m.Map(source)
-	if err != nil {
-		return nil, err
-	}
-
-	marshaledJSONImageSets, err := json.Marshal(jsonImageSets)
-	if err != nil {
-		msg := fmt.Errorf("Couldn't marshall built-up image-sets to JSON. %v\n", err)
-		logrus.Warn(msg)
-		return nil, msg
-	}
-	return marshaledJSONImageSets, nil
 }

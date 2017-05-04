@@ -6,27 +6,38 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"sync"
 )
 
+type app struct {
+	args             args
+	mapperService    ImageSetMapper
+	queue            queue
+	consumerTeardown sync.WaitGroup
+	routing          routing
+}
+
 func main() {
-	app := cli.App("methode-article-image-set-mapper", "Maps inline image-sets from bodies of Methode articles.")
-	args := resolveArgs(app)
-	app.Action = func() {
-		if len(args.addresses) == 0 {
+	cliApp := cli.App("methode-article-image-set-mapper", "Maps inline image-sets from bodies of Methode articles.")
+	a := app{}
+	a.args = resolveArgs(cliApp)
+	cliApp.Action = func() {
+		if len(a.args.addresses) == 0 {
 			logrus.Fatal("No queue address provided. Quitting...")
 		}
-		logrus.Infof("methode-article-image-set-mapper is starting systemCode=%s appName=%s port=%s", args.appSystemCode, args.appName, args.port)
-
-		mapperService := newImageSetMapper()
-		newQueue(args, mapperService)
-		routing := newRouting(mapperService, args.appSystemCode, args.appName)
-		err := routing.listenAndServe(args.port)
+		logrus.Infof("methode-article-image-set-mapper is starting systemCode=%s appName=%s port=%s", a.args.appSystemCode, a.args.appName, a.args.port)
+		a.mapperService = newImageSetMapper()
+		a.queue = newQueue(a.args, a.mapperService)
+		a.queue.startConsuming()
+		a.routing = newRouting(a.mapperService, a.args.appSystemCode, a.args.appName)
+		err := a.routing.listenAndServe(a.args.port)
 		if err != nil {
 			logrus.Fatalf("Cound't serve http endpoints. %v\n", err)
 		}
-		waitForSignals()
+		a.waitForSignals()
+		a.teardown()
 	}
-	err := app.Run(os.Args)
+	err := cliApp.Run(os.Args)
 	if err != nil {
 		logrus.Fatalf("methode-article-image-set-mapper could not start. %v\n", err)
 	}
@@ -121,8 +132,13 @@ func resolveArgs(app *cli.Cli) args {
 	}
 }
 
-func waitForSignals() {
+func (m app) waitForSignals() {
 	ch := make(chan os.Signal, 1)
 	signal.Notify(ch, syscall.SIGINT, syscall.SIGTERM)
 	<-ch
+}
+
+func (m app) teardown() {
+	m.queue.stop()
+	m.consumerTeardown.Wait()
 }

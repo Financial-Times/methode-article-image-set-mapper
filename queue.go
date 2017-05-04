@@ -11,10 +11,11 @@ import (
 	"bytes"
 	"fmt"
 	"net"
+	"sync"
 )
 
 const (
-	methodeSystemOrigin = "http://cmdb.ft.com/systems/methode-webpub"
+	methodeSystemOrigin = "http://cmdb.ft.com/systems/methode-web-pub"
 	dateFormat          = "2006-01-02T03:04:05.000Z0700"
 	contentURIBase = "http://methode-article-images-set-mapper.svc.ft.com/image-set/model/"
 )
@@ -25,6 +26,7 @@ type queue struct {
 	messageConsumer consumer.MessageConsumer
 	messageProducer producer.MessageProducer
 	imageSetMapper ImageSetMapper
+	consumerWaitGroup sync.WaitGroup
 }
 
 func newQueue(args args, imageSetMapper ImageSetMapper) queue {
@@ -58,7 +60,7 @@ func newQueue(args args, imageSetMapper ImageSetMapper) queue {
 		},
 		imageSetMapper: imageSetMapper,
 	}
-	queue.prettyPrintConfig()
+	logrus.Info(queue.prettyPrintConfig())
 	messageConsumer := consumer.NewConsumer(queue.consumerConfig, queue.onMessage, &httpClient)
 	queue.messageConsumer = messageConsumer
 	messageProducer := producer.NewMessageProducerWithHTTPClient(queue.producerConfig, &httpClient)
@@ -103,6 +105,7 @@ func (q queue) onMessage(m consumer.Message) {
 			return
 		}
 		logrus.Infof("Mapped and sent for uuid=%v transactionId=%v", uuid, tid)
+		logrus.Debugf("msg:\n%v\n", msg)
 	}
 }
 
@@ -163,4 +166,18 @@ func (q queue) prettyPrintConsumerConfig() string {
 func (q queue) prettyPrintProducerConfig() string {
 	return fmt.Sprintf("producerConfig: [\n\t\taddr: [%v]\n\t\ttopic: [%v]\n\t\twriteQueueHeader: [%v]\n\t]",
 		q.producerConfig.Addr, q.producerConfig.Topic, q.producerConfig.Queue)
+}
+
+func (q queue) startConsuming() {
+	var consumerWaitGroup sync.WaitGroup
+	consumerWaitGroup.Add(1)
+	go func() {
+		q.messageConsumer.Start()
+		consumerWaitGroup.Done()
+	}()
+	q.consumerWaitGroup = consumerWaitGroup
+}
+
+func (q queue) stop() {
+	q.messageConsumer.Stop()
 }

@@ -25,11 +25,13 @@ type queue struct {
 	producerConfig producer.MessageProducerConfig
 	messageConsumer consumer.MessageConsumer
 	messageProducer producer.MessageProducer
-	imageSetMapper ImageSetMapper
 	consumerWaitGroup sync.WaitGroup
+
+	messageToNativeMapper MessageToNativeMapper
+	imageSetMapper        ImageSetMapper
 }
 
-func newQueue(args args, imageSetMapper ImageSetMapper) queue {
+func newQueue(args args, messageToNativeMapper MessageToNativeMapper, imageSetMapper ImageSetMapper) queue {
 	httpClient := http.Client{
 		Transport: &http.Transport{
 			Proxy: http.ProxyFromEnvironment,
@@ -58,6 +60,8 @@ func newQueue(args args, imageSetMapper ImageSetMapper) queue {
 			Queue:         args.writeQueue,
 			Authorization: args.authorization,
 		},
+
+		messageToNativeMapper: messageToNativeMapper,
 		imageSetMapper: imageSetMapper,
 	}
 	logrus.Info(queue.prettyPrintConfig())
@@ -85,7 +89,18 @@ func (q queue) onMessage(m consumer.Message) {
 		lastModified = time.Now().Format(dateFormat)
 	}
 
-	imageSets, err := q.imageSetMapper.Map([]byte(m.Body))
+
+	native, err := q.messageToNativeMapper.Map([]byte(m.Body))
+	if err != nil {
+		logrus.Errorf("Error mapping native message. transactionId=%v %v", tid, err)
+		return
+	}
+	if native.Type != compoundStory {
+		logrus.Infof("Ignoring message of type=%v transactionId=%v", native.Type, tid)
+		return
+	}
+
+	imageSets, err := q.imageSetMapper.Map(native)
 	if err != nil {
 		logrus.Errorf("Error mapping message to image-sets transactionId=%v %v", tid, err)
 		return

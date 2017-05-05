@@ -17,11 +17,13 @@ func NewHTTPErrorMessage(msg string) ErrorMessage {
 }
 
 type HTTPMappingHandler struct {
-	imageSetMapper ImageSetMapper
+	messageToNativeMapper MessageToNativeMapper
+	imageSetMapper        ImageSetMapper
 }
 
-func newHTTPMappingHandler(imageSetMapper ImageSetMapper) HTTPMappingHandler {
+func newHTTPMappingHandler(messageToNativeMapper MessageToNativeMapper, imageSetMapper ImageSetMapper) HTTPMappingHandler {
 	return HTTPMappingHandler{
+		messageToNativeMapper: messageToNativeMapper,
 		imageSetMapper: imageSetMapper,
 	}
 }
@@ -34,7 +36,13 @@ func (h HTTPMappingHandler) handle(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	imageSets, err := h.imageSetMapper.Map(body)
+	native, err := h.messageToNativeMapper.Map(body)
+	if err != nil {
+		h.writeToHTTP500(fmt.Sprintf("Error mapping native message. %v\n", err), w)
+		return
+	}
+
+	imageSets, err := h.imageSetMapper.Map(native)
 	if err != nil {
 		h.writeToHTTP500(fmt.Sprintf("Error mapping the given content. %v\n", err), w)
 		return

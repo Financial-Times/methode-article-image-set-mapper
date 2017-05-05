@@ -12,17 +12,17 @@ type routing struct {
 	router *mux.Router
 }
 
-func newRouting(mapperService ImageSetMapper, appSystemCode string, appName string) routing {
+func newRouting(messageToNativeMapper MessageToNativeMapper, mapperService ImageSetMapper, appSystemCode string, appName string) routing {
 	r := routing{
 		router: mux.NewRouter(),
 	}
-	r.routeProductionEndpoints(mapperService)
+	r.routeProductionEndpoints(messageToNativeMapper, mapperService)
 	r.routeAdminEndpoints(appSystemCode, appName)
 	return r
 }
 
-func (r routing) routeProductionEndpoints(mapperService ImageSetMapper) {
-	httpMappingHandler := newHTTPMappingHandler(mapperService)
+func (r routing) routeProductionEndpoints(messageToNativeMapper MessageToNativeMapper, mapperService ImageSetMapper) {
+	httpMappingHandler := newHTTPMappingHandler(messageToNativeMapper, mapperService)
 	r.router.Path("/map").Handler(handlers.MethodHandler{"POST": http.HandlerFunc(httpMappingHandler.handle)})
 }
 

@@ -2,55 +2,44 @@ package main
 
 import (
 	"encoding/base64"
-	"encoding/json"
 	"fmt"
 	"github.com/Sirupsen/logrus"
 )
 
+const compoundStory = "EOM::CompoundStory"
+
 type ImageSetMapper interface {
-	Map(source []byte) ([]JSONImageSet, error)
+	Map(source NativeContent) ([]JSONImageSet, error)
 }
 
 type defaultImageSetMapper struct {
-	xmlMapper ArticleToImageSetMapper
-	xmlToJSON XMLImageSetToJSONMapper
+	articleToImageSetMapper ArticleToImageSetMapper
+	xmlImageSetToJSONMapper XMLImageSetToJSONMapper
 }
 
 func newImageSetMapper() ImageSetMapper {
 	return defaultImageSetMapper{
-		xmlMapper: defaultArticleToImageSetMapper{},
-		xmlToJSON: defaultImageSetToJSONMapper{},
+		articleToImageSetMapper: defaultArticleToImageSetMapper{},
+		xmlImageSetToJSONMapper: defaultImageSetToJSONMapper{},
 	}
 }
 
-type NativeContent struct {
-	Value string `json:"value"`
-}
-
-func (m defaultImageSetMapper) Map(source []byte) ([]JSONImageSet, error) {
-	var native NativeContent
-	err := json.Unmarshal(source, &native)
-	if err != nil {
-		msg := fmt.Errorf("Cound't decode native content as JSON doucment. %v\n", err)
-		logrus.Warn(msg)
-		return nil, msg
-	}
-
-	xmlDocument, err := base64.StdEncoding.DecodeString(native.Value)
+func (m defaultImageSetMapper) Map(source NativeContent) ([]JSONImageSet, error) {
+	xmlDocument, err := base64.StdEncoding.DecodeString(source.Value)
 	if err != nil {
 		msg := fmt.Errorf("Cound't decode string as base64. %v\n", err)
 		logrus.Warn(msg)
 		return nil, msg
 	}
 
-	xmlImageSets, err := m.xmlMapper.Map(xmlDocument)
+	xmlImageSets, err := m.articleToImageSetMapper.Map(xmlDocument)
 	if err != nil {
 		msg := fmt.Errorf("Couldn't parse XML document. %v\n", err)
 		logrus.Warn(msg)
 		return nil, msg
 	}
 
-	jsonImageSets, err := m.xmlToJSON.Map(xmlImageSets)
+	jsonImageSets, err := m.xmlImageSetToJSONMapper.Map(xmlImageSets)
 	if err != nil {
 		msg := fmt.Errorf("Couldn't map ImageSets from model soruced from XML to model targeted for JSON. %v\n", err)
 		logrus.Warn(msg)

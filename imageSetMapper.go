@@ -17,10 +17,10 @@ type defaultImageSetMapper struct {
 	xmlImageSetToJSONMapper XMLImageSetToJSONMapper
 }
 
-func newImageSetMapper() ImageSetMapper {
+func newImageSetMapper(articleToImageSetMApper ArticleToImageSetMapper, xmlImageSetToJSONMapper XMLImageSetToJSONMapper) ImageSetMapper {
 	return defaultImageSetMapper{
-		articleToImageSetMapper: defaultArticleToImageSetMapper{},
-		xmlImageSetToJSONMapper: defaultImageSetToJSONMapper{},
+		articleToImageSetMapper: articleToImageSetMApper,
+		xmlImageSetToJSONMapper: xmlImageSetToJSONMapper,
 	}
 }
 

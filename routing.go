@@ -9,15 +9,13 @@ import (
 )
 
 type routing struct {
-	messageToNativeMapper MessageToNativeMapper
-	mapperService         ImageSetMapper
+	httpMappingHandler    HTTPMappingHandler
 	router                *mux.Router
 }
 
-func newRouting(messageToNativeMapper MessageToNativeMapper, mapperService ImageSetMapper, appSystemCode string, appName string) routing {
+func newRouting(httpMappingHandler HTTPMappingHandler, appSystemCode string, appName string) routing {
 	r := routing{
-		messageToNativeMapper: messageToNativeMapper,
-		mapperService:         mapperService,
+		httpMappingHandler:    httpMappingHandler,
 		router:                mux.NewRouter(),
 	}
 	r.routeProductionEndpoints()
@@ -26,8 +24,7 @@ func newRouting(messageToNativeMapper MessageToNativeMapper, mapperService Image
 }
 
 func (r routing) routeProductionEndpoints() {
-	httpMappingHandler := newHTTPMappingHandler(r.messageToNativeMapper, r.mapperService)
-	r.router.Path("/map").Handler(handlers.MethodHandler{"POST": http.HandlerFunc(httpMappingHandler.handle)})
+	r.router.Path("/map").Handler(handlers.MethodHandler{"POST": http.HandlerFunc(r.httpMappingHandler.handle)})
 }
 
 func (r routing) routeAdminEndpoints(appSystemCode string, appName string) {

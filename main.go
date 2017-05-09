@@ -11,10 +11,8 @@ import (
 
 type app struct {
 	args             args
-	mapperService    ImageSetMapper
 	queue            queue
 	consumerTeardown sync.WaitGroup
-	routing          routing
 }
 
 func main() {
@@ -27,10 +25,12 @@ func main() {
 		}
 		logrus.Infof("methode-article-image-set-mapper is starting systemCode=%s appName=%s port=%s", a.args.appSystemCode, a.args.appName, a.args.port)
 		messageToNativeMapper := defaultMessageToNativeMapper{}
-		a.queue = newQueue(a.args, messageToNativeMapper, a.mapperService)
+		imageSetMapper := newImageSetMapper(defaultArticleToImageSetMapper{}, defaultImageSetToJSONMapper{})
+		a.queue = newQueue(a.args, messageToNativeMapper, imageSetMapper)
 		a.queue.startConsuming()
-		a.routing = newRouting(messageToNativeMapper, a.mapperService, a.args.appSystemCode, a.args.appName)
-		err := a.routing.listenAndServe(a.args.port)
+		httpMappingHandler := newHTTPMappingHandler(messageToNativeMapper, imageSetMapper)
+		routing := newRouting(httpMappingHandler, a.args.appSystemCode, a.args.appName)
+		err := routing.listenAndServe(a.args.port)
 		if err != nil {
 			logrus.Fatalf("Cound't serve http endpoints. %v\n", err)
 		}

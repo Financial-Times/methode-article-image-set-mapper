@@ -16,19 +16,23 @@ func newHTTPErrorMessage(msg string) ErrorMessage {
 	return ErrorMessage{Message: msg}
 }
 
-type HTTPMappingHandler struct {
+type HTTPMappingHandler interface {
+	handle(w http.ResponseWriter, r *http.Request)
+}
+
+type defaultHTTPMappingHandler struct {
 	messageToNativeMapper MessageToNativeMapper
 	imageSetMapper        ImageSetMapper
 }
 
 func newHTTPMappingHandler(messageToNativeMapper MessageToNativeMapper, imageSetMapper ImageSetMapper) HTTPMappingHandler {
-	return HTTPMappingHandler{
+	return defaultHTTPMappingHandler{
 		messageToNativeMapper: messageToNativeMapper,
 		imageSetMapper:        imageSetMapper,
 	}
 }
 
-func (h HTTPMappingHandler) handle(w http.ResponseWriter, r *http.Request) {
+func (h defaultHTTPMappingHandler) handle(w http.ResponseWriter, r *http.Request) {
 	body, err := ioutil.ReadAll(r.Body)
 	defer h.closeResponseBody(r)
 	if err != nil {
@@ -61,12 +65,12 @@ func (h HTTPMappingHandler) handle(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (h HTTPMappingHandler) warnAndWriteToHTTP500(msg string, w http.ResponseWriter) {
+func (h defaultHTTPMappingHandler) warnAndWriteToHTTP500(msg string, w http.ResponseWriter) {
 	logrus.Warn(msg)
 	h.writeToHTTP500(msg, w)
 }
 
-func (h HTTPMappingHandler) writeToHTTP500(msg string, w http.ResponseWriter) {
+func (h defaultHTTPMappingHandler) writeToHTTP500(msg string, w http.ResponseWriter) {
 	httpMsg, marshalErr := json.Marshal(newHTTPErrorMessage(msg))
 	if marshalErr != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -80,7 +84,7 @@ func (h HTTPMappingHandler) writeToHTTP500(msg string, w http.ResponseWriter) {
 	}
 }
 
-func (h HTTPMappingHandler) closeResponseBody(r *http.Request) {
+func (h defaultHTTPMappingHandler) closeResponseBody(r *http.Request) {
 	err := r.Body.Close()
 	if err != nil {
 		logrus.Warnf("Coulnd't close request body. %v\n", err)

@@ -12,7 +12,7 @@ type ErrorMessage struct {
 	Message string `json:"message"`
 }
 
-func NewHTTPErrorMessage(msg string) ErrorMessage {
+func newHTTPErrorMessage(msg string) ErrorMessage {
 	return ErrorMessage{Message: msg}
 }
 
@@ -67,7 +67,7 @@ func (h HTTPMappingHandler) warnAndWriteToHTTP500(msg string, w http.ResponseWri
 }
 
 func (h HTTPMappingHandler) writeToHTTP500(msg string, w http.ResponseWriter) {
-	httpMsg, marshalErr := json.Marshal(NewHTTPErrorMessage(msg))
+	httpMsg, marshalErr := json.Marshal(newHTTPErrorMessage(msg))
 	if marshalErr != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return

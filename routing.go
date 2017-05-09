@@ -9,20 +9,24 @@ import (
 )
 
 type routing struct {
+	messageToNativeMapper MessageToNativeMapper
+	mapperService ImageSetMapper
 	router *mux.Router
 }
 
 func newRouting(messageToNativeMapper MessageToNativeMapper, mapperService ImageSetMapper, appSystemCode string, appName string) routing {
 	r := routing{
+		messageToNativeMapper: messageToNativeMapper,
+		mapperService: mapperService,
 		router: mux.NewRouter(),
 	}
-	r.routeProductionEndpoints(messageToNativeMapper, mapperService)
+	r.routeProductionEndpoints()
 	r.routeAdminEndpoints(appSystemCode, appName)
 	return r
 }
 
-func (r routing) routeProductionEndpoints(messageToNativeMapper MessageToNativeMapper, mapperService ImageSetMapper) {
-	httpMappingHandler := newHTTPMappingHandler(messageToNativeMapper, mapperService)
+func (r routing) routeProductionEndpoints() {
+	httpMappingHandler := newHTTPMappingHandler(r.messageToNativeMapper, r.mapperService)
 	r.router.Path("/map").Handler(handlers.MethodHandler{"POST": http.HandlerFunc(httpMappingHandler.handle)})
 }
 

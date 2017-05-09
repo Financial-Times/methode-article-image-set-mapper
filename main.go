@@ -5,8 +5,8 @@ import (
 	"github.com/jawher/mow.cli"
 	"os"
 	"os/signal"
-	"syscall"
 	"sync"
+	"syscall"
 )
 
 type app struct {
@@ -50,9 +50,9 @@ type args struct {
 
 	addresses     []string
 	group         string
-        readTopic     string
-        readQueue     string
-        writeTopic    string
+	readTopic     string
+	readQueue     string
+	writeTopic    string
 	writeQueue    string
 	authorization string
 }

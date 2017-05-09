@@ -10,15 +10,15 @@ import (
 
 type routing struct {
 	messageToNativeMapper MessageToNativeMapper
-	mapperService ImageSetMapper
-	router *mux.Router
+	mapperService         ImageSetMapper
+	router                *mux.Router
 }
 
 func newRouting(messageToNativeMapper MessageToNativeMapper, mapperService ImageSetMapper, appSystemCode string, appName string) routing {
 	r := routing{
 		messageToNativeMapper: messageToNativeMapper,
-		mapperService: mapperService,
-		router: mux.NewRouter(),
+		mapperService:         mapperService,
+		router:                mux.NewRouter(),
 	}
 	r.routeProductionEndpoints()
 	r.routeAdminEndpoints(appSystemCode, appName)

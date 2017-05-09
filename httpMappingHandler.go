@@ -24,7 +24,7 @@ type HTTPMappingHandler struct {
 func newHTTPMappingHandler(messageToNativeMapper MessageToNativeMapper, imageSetMapper ImageSetMapper) HTTPMappingHandler {
 	return HTTPMappingHandler{
 		messageToNativeMapper: messageToNativeMapper,
-		imageSetMapper: imageSetMapper,
+		imageSetMapper:        imageSetMapper,
 	}
 }
 

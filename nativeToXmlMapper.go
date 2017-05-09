@@ -9,7 +9,7 @@ type MessageToNativeMapper interface {
 	Map(source []byte) (NativeContent, error)
 }
 
-type defaultMessageToNativeMapper struct {}
+type defaultMessageToNativeMapper struct{}
 
 type NativeContent struct {
 	Type  string `json:"type"`

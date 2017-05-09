@@ -1,30 +1,30 @@
 package main
 
 import (
+	"bytes"
+	"encoding/json"
+	"fmt"
 	"github.com/Financial-Times/message-queue-go-producer/producer"
 	"github.com/Financial-Times/message-queue-gonsumer/consumer"
-	gouuid "github.com/satori/go.uuid"
 	"github.com/Sirupsen/logrus"
-	"net/http"
-	"time"
-	"encoding/json"
-	"bytes"
-	"fmt"
+	gouuid "github.com/satori/go.uuid"
 	"net"
+	"net/http"
 	"sync"
+	"time"
 )
 
 const (
 	methodeSystemOrigin = "http://cmdb.ft.com/systems/methode-web-pub"
 	dateFormat          = "2006-01-02T03:04:05.000Z0700"
-	contentURIBase = "http://methode-article-images-set-mapper.svc.ft.com/image-set/model/"
+	contentURIBase      = "http://methode-article-images-set-mapper.svc.ft.com/image-set/model/"
 )
 
 type queue struct {
-	consumerConfig consumer.QueueConfig
-	producerConfig producer.MessageProducerConfig
-	messageConsumer consumer.MessageConsumer
-	messageProducer producer.MessageProducer
+	consumerConfig    consumer.QueueConfig
+	producerConfig    producer.MessageProducerConfig
+	messageConsumer   consumer.MessageConsumer
+	messageProducer   producer.MessageProducer
 	consumerWaitGroup sync.WaitGroup
 
 	messageToNativeMapper MessageToNativeMapper
@@ -62,7 +62,7 @@ func newQueue(args args, messageToNativeMapper MessageToNativeMapper, imageSetMa
 		},
 
 		messageToNativeMapper: messageToNativeMapper,
-		imageSetMapper: imageSetMapper,
+		imageSetMapper:        imageSetMapper,
 	}
 	logrus.Info(queue.prettyPrintConfig())
 	messageConsumer := consumer.NewConsumer(queue.consumerConfig, queue.onMessage, &httpClient)
@@ -88,7 +88,6 @@ func (q queue) onMessage(m consumer.Message) {
 	if lastModified == "" {
 		lastModified = time.Now().Format(dateFormat)
 	}
-
 
 	native, err := q.messageToNativeMapper.Map([]byte(m.Body))
 	if err != nil {
@@ -124,7 +123,7 @@ func (q queue) onMessage(m consumer.Message) {
 	}
 }
 
-func (q queue) buildMessages(imageSets []JSONImageSet, lastModified string , tid string) (map[string]producer.Message, map[string]error) {
+func (q queue) buildMessages(imageSets []JSONImageSet, lastModified string, tid string) (map[string]producer.Message, map[string]error) {
 	errs := make(map[string]error, 0)
 	msgs := make(map[string]producer.Message, 0)
 	for _, imageSet := range imageSets {

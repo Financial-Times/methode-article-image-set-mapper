@@ -6,6 +6,7 @@ import (
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"net/http"
+	"github.com/Sirupsen/logrus"
 )
 
 type routing struct {
@@ -36,6 +37,9 @@ func (r routing) routeAdminEndpoints(appSystemCode string, appName string) {
 	r.router.Path(status.BuildInfoPath).Handler(handlers.MethodHandler{"GET": http.HandlerFunc(status.BuildInfoHandler)})
 }
 
-func (r routing) listenAndServe(port string) error {
-	return http.ListenAndServe(":"+port, r.router)
+func (r routing) listenAndServe(port string) {
+	err := http.ListenAndServe(":"+port, r.router)
+	if err != nil {
+		logrus.Fatalf("Cound't serve http endpoints. %v\n", err)
+	}
 }

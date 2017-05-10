@@ -16,6 +16,7 @@ type app struct {
 }
 
 func main() {
+	logrus.SetLevel(logrus.DebugLevel)
 	cliApp := cli.App("methode-article-image-set-mapper", "Maps inline image-sets from bodies of Methode articles.")
 	a := app{}
 	a.args = resolveArgs(cliApp)
@@ -30,10 +31,7 @@ func main() {
 		a.queue.startConsuming()
 		httpMappingHandler := newHTTPMappingHandler(messageToNativeMapper, imageSetMapper)
 		routing := newRouting(httpMappingHandler, a.args.appSystemCode, a.args.appName)
-		err := routing.listenAndServe(a.args.port)
-		if err != nil {
-			logrus.Fatalf("Cound't serve http endpoints. %v\n", err)
-		}
+		go routing.listenAndServe(a.args.port)
 		a.waitForSignals()
 		a.teardown()
 	}
@@ -136,6 +134,7 @@ func (m app) waitForSignals() {
 	ch := make(chan os.Signal, 1)
 	signal.Notify(ch, syscall.SIGINT, syscall.SIGTERM)
 	<-ch
+	logrus.Debugf("Received interrupt signal, tearing down app...")
 }
 
 func (m app) teardown() {

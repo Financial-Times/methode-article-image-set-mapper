@@ -1,5 +1,7 @@
 package main
 
+import "github.com/Financial-Times/methode-article-image-set-mapper/uuidutils"
+
 type XMLImageSetToJSONMapper interface {
 	Map(xmlImageSets []XMLImageSet) ([]JSONImageSet, error)
 }
@@ -14,8 +16,12 @@ func (m defaultImageSetToJSONMapper) Map(xmlImageSets []XMLImageSet) ([]JSONImag
 			m.mapMember(xmlImageSet.ImageLarge),
 			m.mapMember(xmlImageSet.ImageSmall),
 		}
+		uuid, err := uuidut123.NewUUIDFromString(xmlImageSet.ID)
+		if err != nil {
+			return nil, err
+		}
 		jsonImageSet := JSONImageSet{
-			UUID:    xmlImageSet.ID,
+			UUID: uuid.String(),
 			Members: members,
 		}
 		jsonImageSets = append(jsonImageSets, jsonImageSet)

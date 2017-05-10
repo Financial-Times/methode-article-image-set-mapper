@@ -78,6 +78,7 @@ func (q queue) onMessage(m consumer.Message) {
 		logrus.Warnf("X-Request-Id not found in kafka message headers. Skipping message")
 		return
 	}
+	logrus.Debugf("got msg with tid=%v", tid)
 
 	if m.Headers["Origin-System-Id"] != methodeSystemOrigin {
 		logrus.Infof("Ignoring message with different originSystemId=%v transactionId=%v ", m.Headers["Origin-System-Id"], tid)
@@ -104,6 +105,7 @@ func (q queue) onMessage(m consumer.Message) {
 		logrus.Errorf("Error mapping message to image-sets transactionId=%v %v", tid, err)
 		return
 	}
+	logrus.Debugf("imageSets=%v", imageSets)
 
 	msgs, errs := q.buildMessages(imageSets, lastModified, tid)
 	if len(errs) != 0 {
@@ -187,6 +189,7 @@ func (q queue) startConsuming() {
 	consumerWaitGroup.Add(1)
 	go func() {
 		q.messageConsumer.Start()
+		logrus.Debugf("Queue consumer started.")
 		consumerWaitGroup.Done()
 	}()
 	q.consumerWaitGroup = consumerWaitGroup
@@ -194,4 +197,5 @@ func (q queue) startConsuming() {
 
 func (q queue) stop() {
 	q.messageConsumer.Stop()
+	logrus.Debugf("Queue consumer stopped.")
 }

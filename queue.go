@@ -65,10 +65,8 @@ func newQueue(args args, messageToNativeMapper MessageToNativeMapper, imageSetMa
 		imageSetMapper:        imageSetMapper,
 	}
 	logrus.Info(queue.prettyPrintConfig())
-	messageConsumer := consumer.NewConsumer(queue.consumerConfig, queue.onMessage, &httpClient)
-	queue.messageConsumer = messageConsumer
-	messageProducer := producer.NewMessageProducerWithHTTPClient(queue.producerConfig, &httpClient)
-	queue.messageProducer = messageProducer
+	queue.messageConsumer = consumer.NewConsumer(queue.consumerConfig, queue.onMessage, &httpClient)
+	queue.messageProducer = producer.NewMessageProducerWithHTTPClient(queue.producerConfig, &httpClient)
 	return queue
 }
 
@@ -114,11 +112,13 @@ func (q queue) onMessage(m consumer.Message) {
 		}
 	}
 
+	logrus.Debugf("len(msgs)=%v", len(msgs))
+	logrus.Debugf("msgs=%v", msgs)
 	for uuid, msg := range msgs {
 		err = q.messageProducer.SendMessage("", msg)
 		if err != nil {
 			logrus.Errorf("Error sending transformed message to queue transactionId=%v uuid=%v %v", tid, uuid, err)
-			return
+			continue
 		}
 		logrus.Infof("Mapped and sent for uuid=%v transactionId=%v", uuid, tid)
 		logrus.Debugf("msg:\n%v\n", msg)

@@ -12,18 +12,14 @@ const (
 type generateUUID struct {
 }
 
-func NewGenerateUUID() *generateUUID {
-	return &generateUUID{}
-}
-
 // Generate a new UUID based on a random string (which can be some URL, ID or any other string)
-func (gu *generateUUID) From(str string) (UUID, error) {
+func From(str string) UUID {
 	digest := newV5Digest(NAMESPACE_URL_ID, str)
 
 	hi := createMSB(digest)
 	lo := createLSB(digest)
 
-	return UUID{binary.BigEndian.Uint64(hi), binary.BigEndian.Uint64(lo)}, nil
+	return UUID{binary.BigEndian.Uint64(hi), binary.BigEndian.Uint64(lo)}
 }
 
 func newV5Digest(ns string, str string) []byte {

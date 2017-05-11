@@ -11,7 +11,7 @@
 		{
 			"checksumSHA1": "yceqWuIbFzntmSHl66OwNoP/c6E=",
 			"path": "github.com/Financial-Times/message-queue-go-producer/producer",
-			"revision": "1.0.5"
+			"revision": "v0.1.0"
 		},
 		{
 			"checksumSHA1": "/kMYtkcxWV4dZNvJaEGkDUwt3TA=",

@@ -134,7 +134,6 @@ func (m app) waitForSignals() {
 	ch := make(chan os.Signal, 1)
 	signal.Notify(ch, syscall.SIGINT, syscall.SIGTERM)
 	<-ch
-	logrus.Debugf("Received interrupt signal, tearing down app...")
 }
 
 func (m app) teardown() {

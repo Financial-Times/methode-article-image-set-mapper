@@ -7,6 +7,7 @@ import (
 	"github.com/stretchr/testify/mock"
 	"strings"
 	"github.com/pkg/errors"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestOnMessage_Ok(t *testing.T) {
@@ -152,6 +153,66 @@ func TestOnMessage_WarnIfErrorInImageSetMapper(t *testing.T) {
 	q := newQueue(nil, mockedProducer, mockedMessageToNativeMapper, mockedImageSetMapper)
 	q.onMessage(sourceMsg)
 	mockedProducer.AssertNotCalled(t, "SendMessage", "", mock.MatchedBy(func(msg producer.Message) bool { return true }))
+}
+
+func TestBuildMessage_Ok(t *testing.T) {
+	q := newQueue(nil, nil, nil, nil)
+	actualMsg, err := q.buildMessage(JSONImageSet{
+		UUID: "5a8f3f37-3098-48f7-811a-f69d12f2b1be",
+		Members: []JSONMember{
+			JSONMember{ UUID: "8ff1c7f4-a80b-4b8d-8821-b07ff1bfdf87"},
+			JSONMember{ UUID: "3bea853a-89b8-4831-80b3-8384e962f5dc"},
+			JSONMember{ UUID: "c6eeea75-748e-4b1c-a046-6e4c9d81ff25"},
+		},
+	}, "2017-05-15T15:54:32.166Z", "tid_test")
+	if err != nil {
+		assert.Error(t, err, "buildMessage() failed")
+	}
+	assert.Equal(t, actualMsg.Headers["X-Request-Id"], "tid_test")
+	assert.NotEmpty(t, actualMsg.Headers["Message-Id"])
+	assert.Equal(t, actualMsg.Headers["Message-Type"], "cms-content-published")
+	assert.Equal(t, actualMsg.Headers["Content-Type"], "application/json")
+	assert.Equal(t, actualMsg.Headers["Origin-System-Id"], methodeSystemOrigin)
+	assert.Equal(t, actualMsg.Body, `{"contentUri":"http://methode-article-image-set-mapper.svc.ft.com/image-set/model/5a8f3f37-3098-48f7-811a-f69d12f2b1be","payload":{"uuid":"5a8f3f37-3098-48f7-811a-f69d12f2b1be","members":[{"uuid":"8ff1c7f4-a80b-4b8d-8821-b07ff1bfdf87"},{"uuid":"3bea853a-89b8-4831-80b3-8384e962f5dc"},{"uuid":"c6eeea75-748e-4b1c-a046-6e4c9d81ff25"}]},"lastModified":"2017-05-15T15:54:32.166Z"}`)
+}
+
+func TestBuildMessages_Ok(t *testing.T) {
+	q := newQueue(nil, nil, nil, nil)
+	actualMsgs, errs := q.buildMessages([]JSONImageSet{
+		JSONImageSet{
+			UUID: "5a8f3f37-3098-48f7-811a-f69d12f2b1be",
+			Members: []JSONMember{
+				JSONMember{UUID: "8ff1c7f4-a80b-4b8d-8821-b07ff1bfdf87"},
+				JSONMember{UUID: "3bea853a-89b8-4831-80b3-8384e962f5dc"},
+				JSONMember{UUID: "c6eeea75-748e-4b1c-a046-6e4c9d81ff25"},
+			},
+		},
+		JSONImageSet{
+			UUID: "270c0151-7742-4c1e-b77e-a5557881a042",
+			Members: []JSONMember{
+				JSONMember{UUID: "667ee7f3-4f58-4080-a6f9-9b16b633dea8"},
+				JSONMember{UUID: "a0513a50-08d1-43f6-af2b-7e7dc4d40b31"},
+				JSONMember{UUID: "47e5a693-cd39-4ede-a016-244e6413a7fa"},
+			},
+		},
+	}, "2017-05-15T15:54:32.166Z", "tid_test")
+	if len(errs) != 0 {
+		assert.Error(t, nil, "buildMessages() failed")
+	}
+	assert.Equal(t, actualMsgs["5a8f3f37-3098-48f7-811a-f69d12f2b1be"].Headers["X-Request-Id"], "tid_test")
+	assert.NotEmpty(t, actualMsgs["5a8f3f37-3098-48f7-811a-f69d12f2b1be"].Headers["Message-Id"])
+	assert.Equal(t, actualMsgs["5a8f3f37-3098-48f7-811a-f69d12f2b1be"].Headers["Message-Type"], "cms-content-published")
+	assert.Equal(t, actualMsgs["5a8f3f37-3098-48f7-811a-f69d12f2b1be"].Headers["Content-Type"], "application/json")
+	assert.Equal(t, actualMsgs["5a8f3f37-3098-48f7-811a-f69d12f2b1be"].Headers["Origin-System-Id"], methodeSystemOrigin)
+	assert.Equal(t, actualMsgs["5a8f3f37-3098-48f7-811a-f69d12f2b1be"].Body, `{"contentUri":"http://methode-article-image-set-mapper.svc.ft.com/image-set/model/5a8f3f37-3098-48f7-811a-f69d12f2b1be","payload":{"uuid":"5a8f3f37-3098-48f7-811a-f69d12f2b1be","members":[{"uuid":"8ff1c7f4-a80b-4b8d-8821-b07ff1bfdf87"},{"uuid":"3bea853a-89b8-4831-80b3-8384e962f5dc"},{"uuid":"c6eeea75-748e-4b1c-a046-6e4c9d81ff25"}]},"lastModified":"2017-05-15T15:54:32.166Z"}`)
+
+	assert.Equal(t, actualMsgs["270c0151-7742-4c1e-b77e-a5557881a042"].Headers["X-Request-Id"], "tid_test")
+	assert.NotEmpty(t, actualMsgs["270c0151-7742-4c1e-b77e-a5557881a042"].Headers["Message-Id"])
+	assert.Equal(t, actualMsgs["270c0151-7742-4c1e-b77e-a5557881a042"].Headers["Message-Type"], "cms-content-published")
+	assert.Equal(t, actualMsgs["270c0151-7742-4c1e-b77e-a5557881a042"].Headers["Content-Type"], "application/json")
+	assert.Equal(t, actualMsgs["270c0151-7742-4c1e-b77e-a5557881a042"].Headers["Origin-System-Id"], methodeSystemOrigin)
+	assert.Equal(t, actualMsgs["270c0151-7742-4c1e-b77e-a5557881a042"].Body, `{"contentUri":"http://methode-article-image-set-mapper.svc.ft.com/image-set/model/270c0151-7742-4c1e-b77e-a5557881a042","payload":{"uuid":"270c0151-7742-4c1e-b77e-a5557881a042","members":[{"uuid":"667ee7f3-4f58-4080-a6f9-9b16b633dea8"},{"uuid":"a0513a50-08d1-43f6-af2b-7e7dc4d40b31"},{"uuid":"47e5a693-cd39-4ede-a016-244e6413a7fa"}]},"lastModified":"2017-05-15T15:54:32.166Z"}`)
+
 }
 
 type mockProducer struct{

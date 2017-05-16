@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/Financial-Times/methode-article-image-set-mapper/uuidutils"
+	"github.com/Financial-Times/uuid-utils-go"
 	"strings"
 )
 
@@ -19,9 +19,12 @@ func (m defaultImageSetToJSONMapper) Map(xmlImageSets []XMLImageSet) ([]JSONImag
 			m.mapMember(xmlImageSet.ImageSmall),
 			m.mapMember(xmlImageSet.ImageLarge),
 		}
-		uuid := uuidut123.From(xmlImageSet.ID)
+		uuid, err := uuidutils.NewUUIDFromString(xmlImageSet.ID)
+		if err != nil {
+			return nil, err
+		}
 		jsonImageSet := JSONImageSet{
-			UUID: (&uuid).String(),
+			UUID: uuid.String(),
 			Members: members,
 		}
 		jsonImageSets = append(jsonImageSets, jsonImageSet)

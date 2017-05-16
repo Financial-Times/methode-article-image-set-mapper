@@ -39,7 +39,7 @@ func TestMap_Ok(t *testing.T) {
 	}
 	expectedImageSets := []JSONImageSet{
 		JSONImageSet{
-			UUID: "00001506-0086-50e2-ab6c-3e8d4f02ea5e",
+			UUID: "1376ed33-0d81-3f62-ad62-a9b87b473556",
 			Members: []JSONMember{
 				JSONMember{
 					UUID: "41614f4c-13c5-11e7-9469-afea892e4de3",
@@ -53,7 +53,7 @@ func TestMap_Ok(t *testing.T) {
 			},
 		},
 		JSONImageSet{
-			UUID: "00003618-00e6-501f-9928-89384348a985",
+			UUID: "89e79a93-1bcc-39d6-bcc4-e77b82d3712f",
 			Members: []JSONMember{
 				JSONMember{
 					UUID: "2fe0b459-a23e-452d-a2aa-2e0503982ed2",

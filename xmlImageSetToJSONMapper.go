@@ -19,10 +19,7 @@ func (m defaultImageSetToJSONMapper) Map(xmlImageSets []XMLImageSet) ([]JSONImag
 			m.mapMember(xmlImageSet.ImageSmall),
 			m.mapMember(xmlImageSet.ImageLarge),
 		}
-		uuid, err := uuidutils.NewUUIDFromString(xmlImageSet.ID)
-		if err != nil {
-			return nil, err
-		}
+		uuid := uuidutils.NewV3UUID(xmlImageSet.ID)
 		jsonImageSet := JSONImageSet{
 			UUID: uuid.String(),
 			Members: members,

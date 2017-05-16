@@ -6,8 +6,8 @@ import (
 	"github.com/Financial-Times/message-queue-go-producer/producer"
 	"github.com/stretchr/testify/mock"
 	"strings"
-	"github.com/pkg/errors"
 	"github.com/stretchr/testify/assert"
+	"errors"
 )
 
 func TestOnMessage_Ok(t *testing.T) {

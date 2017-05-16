@@ -7,11 +7,16 @@ import (
 	"os/signal"
 	"sync"
 	"syscall"
+	"github.com/Financial-Times/message-queue-gonsumer/consumer"
+	"github.com/Financial-Times/message-queue-go-producer/producer"
+	"net/http"
+	"net"
+	"time"
 )
 
 type app struct {
 	args             args
-	queue            queue
+	queue            defaultQueue
 	consumerTeardown sync.WaitGroup
 }
 
@@ -27,7 +32,38 @@ func main() {
 		logrus.Infof("methode-article-image-set-mapper is starting systemCode=%s appName=%s port=%s", a.args.appSystemCode, a.args.appName, a.args.port)
 		messageToNativeMapper := defaultMessageToNativeMapper{}
 		imageSetMapper := newImageSetMapper(defaultArticleToImageSetMapper{}, defaultImageSetToJSONMapper{})
-		a.queue = newQueue(a.args, messageToNativeMapper, imageSetMapper)
+		httpClient := http.Client{
+			Transport: &http.Transport{
+				Proxy: http.ProxyFromEnvironment,
+				DialContext: (&net.Dialer{
+					Timeout:   30 * time.Second,
+					KeepAlive: 30 * time.Second,
+				}).DialContext,
+				MaxIdleConnsPerHost:   20,
+				TLSHandshakeTimeout:   3 * time.Second,
+				ExpectContinueTimeout: 1 * time.Second,
+			},
+		}
+		consumerConfig := consumer.QueueConfig{
+			Addrs:                a.args.addresses,
+			Group:                a.args.group,
+			Topic:                a.args.readTopic,
+			Queue:                a.args.readQueue,
+			ConcurrentProcessing: false,
+			AutoCommitEnable:     true,
+			AuthorizationKey:     a.args.authorization,
+		}
+		producerConfig := producer.MessageProducerConfig{
+			Addr:          a.args.addresses[0],
+			Topic:         a.args.writeTopic,
+			Queue:         a.args.writeQueue,
+			Authorization: a.args.authorization,
+		}
+		prettyPrintConfig(consumerConfig, producerConfig)
+		messageProducer := producer.NewMessageProducerWithHTTPClient(producerConfig, &httpClient)
+		a.queue = newQueue(nil, messageProducer, messageToNativeMapper, imageSetMapper)
+		messageConsumer := consumer.NewConsumer(consumerConfig, a.queue.onMessage, &httpClient)
+		a.queue.messageConsumer = messageConsumer
 		a.queue.startConsuming()
 		httpMappingHandler := newHTTPMappingHandler(messageToNativeMapper, imageSetMapper)
 		routing := newRouting(httpMappingHandler, a.args.appSystemCode, a.args.appName)

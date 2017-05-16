@@ -8,8 +8,6 @@ import (
 	"github.com/Financial-Times/message-queue-gonsumer/consumer"
 	"github.com/Sirupsen/logrus"
 	gouuid "github.com/satori/go.uuid"
-	"net"
-	"net/http"
 	"sync"
 	"time"
 )
@@ -20,9 +18,11 @@ const (
 	contentURIBase      = "http://methode-article-image-set-mapper.svc.ft.com/image-set/model/"
 )
 
-type queue struct {
-	consumerConfig    consumer.QueueConfig
-	producerConfig    producer.MessageProducerConfig
+type queue interface {
+	onMessage(m consumer.Message)
+}
+
+type defaultQueue struct {
 	messageConsumer   consumer.MessageConsumer
 	messageProducer   producer.MessageProducer
 	consumerWaitGroup sync.WaitGroup
@@ -31,46 +31,18 @@ type queue struct {
 	imageSetMapper        ImageSetMapper
 }
 
-func newQueue(args args, messageToNativeMapper MessageToNativeMapper, imageSetMapper ImageSetMapper) queue {
-	httpClient := http.Client{
-		Transport: &http.Transport{
-			Proxy: http.ProxyFromEnvironment,
-			DialContext: (&net.Dialer{
-				Timeout:   30 * time.Second,
-				KeepAlive: 30 * time.Second,
-			}).DialContext,
-			MaxIdleConnsPerHost:   20,
-			TLSHandshakeTimeout:   3 * time.Second,
-			ExpectContinueTimeout: 1 * time.Second,
-		},
-	}
-	queue := queue{
-		consumerConfig: consumer.QueueConfig{
-			Addrs:                args.addresses,
-			Group:                args.group,
-			Topic:                args.readTopic,
-			Queue:                args.readQueue,
-			ConcurrentProcessing: false,
-			AutoCommitEnable:     true,
-			AuthorizationKey:     args.authorization,
-		},
-		producerConfig: producer.MessageProducerConfig{
-			Addr:          args.addresses[0],
-			Topic:         args.writeTopic,
-			Queue:         args.writeQueue,
-			Authorization: args.authorization,
-		},
-
+func newQueue(messageConsumer consumer.MessageConsumer, messageProducer producer.MessageProducer,
+	messageToNativeMapper MessageToNativeMapper, imageSetMapper ImageSetMapper) defaultQueue {
+	queue := defaultQueue{
+		messageConsumer: messageConsumer,
+		messageProducer: messageProducer,
 		messageToNativeMapper: messageToNativeMapper,
 		imageSetMapper:        imageSetMapper,
 	}
-	logrus.Info(queue.prettyPrintConfig())
-	queue.messageProducer = producer.NewMessageProducerWithHTTPClient(queue.producerConfig, &httpClient)
-	queue.messageConsumer = consumer.NewConsumer(queue.consumerConfig, queue.onMessage, &httpClient)
 	return queue
 }
 
-func (q queue) onMessage(m consumer.Message) {
+func (q defaultQueue) onMessage(m consumer.Message) {
 	tid := m.Headers["X-Request-Id"]
 	if tid == "" {
 		logrus.Warnf("X-Request-Id not found in kafka message headers. Skipping message")
@@ -119,7 +91,7 @@ func (q queue) onMessage(m consumer.Message) {
 	}
 }
 
-func (q queue) buildMessages(imageSets []JSONImageSet, lastModified string, tid string) (map[string]producer.Message, map[string]error) {
+func (q defaultQueue) buildMessages(imageSets []JSONImageSet, lastModified string, tid string) (map[string]producer.Message, map[string]error) {
 	errs := make(map[string]error, 0)
 	msgs := make(map[string]producer.Message, 0)
 	for _, imageSet := range imageSets {
@@ -133,7 +105,7 @@ func (q queue) buildMessages(imageSets []JSONImageSet, lastModified string, tid 
 	return msgs, errs
 }
 
-func (q queue) buildMessage(imageSet JSONImageSet, lastModified, pubRef string) (producer.Message, error) {
+func (q defaultQueue) buildMessage(imageSet JSONImageSet, lastModified, pubRef string) (producer.Message, error) {
 	headers := map[string]string{
 		"X-Request-Id":      pubRef,
 		"Message-Timestamp": lastModified,
@@ -154,7 +126,7 @@ func (q queue) buildMessage(imageSet JSONImageSet, lastModified, pubRef string) 
 	return producer.Message{Headers: headers, Body: string(marshaledBody)}, nil
 }
 
-func (q queue) unsafeJSONMarshal(v interface{}) ([]byte, error) {
+func (q defaultQueue) unsafeJSONMarshal(v interface{}) ([]byte, error) {
 	b, err := json.Marshal(v)
 	if err != nil {
 		return nil, err
@@ -164,21 +136,21 @@ func (q queue) unsafeJSONMarshal(v interface{}) ([]byte, error) {
 	return b, nil
 }
 
-func (q queue) prettyPrintConfig() string {
-	return fmt.Sprintf("Config: [\n\t%s\n\t%s\n]", q.prettyPrintConsumerConfig(), q.prettyPrintProducerConfig())
+func prettyPrintConfig(consumerConfig consumer.QueueConfig, producerConfig producer.MessageProducerConfig) string {
+	return fmt.Sprintf("Config: [\n\t%s\n\t%s\n]", prettyPrintConsumerConfig(consumerConfig), prettyPrintProducerConfig(producerConfig))
 }
 
-func (q queue) prettyPrintConsumerConfig() string {
+func prettyPrintConsumerConfig(consumerConfig consumer.QueueConfig) string {
 	return fmt.Sprintf("consumerConfig: [\n\t\taddr: [%v]\n\t\tgroup: [%v]\n\t\ttopic: [%v]\n\t\treadQueueHeader: [%v]\n\t]",
-		q.consumerConfig.Addrs, q.consumerConfig.Group, q.consumerConfig.Topic, q.consumerConfig.Queue)
+		consumerConfig.Addrs, consumerConfig.Group, consumerConfig.Topic, consumerConfig.Queue)
 }
 
-func (q queue) prettyPrintProducerConfig() string {
+func prettyPrintProducerConfig(producerConfig producer.MessageProducerConfig) string {
 	return fmt.Sprintf("producerConfig: [\n\t\taddr: [%v]\n\t\ttopic: [%v]\n\t\twriteQueueHeader: [%v]\n\t]",
-		q.producerConfig.Addr, q.producerConfig.Topic, q.producerConfig.Queue)
+		producerConfig.Addr, producerConfig.Topic, producerConfig.Queue)
 }
 
-func (q queue) startConsuming() {
+func (q defaultQueue) startConsuming() {
 	var consumerWaitGroup sync.WaitGroup
 	consumerWaitGroup.Add(1)
 	go func() {
@@ -188,6 +160,6 @@ func (q queue) startConsuming() {
 	q.consumerWaitGroup = consumerWaitGroup
 }
 
-func (q queue) stop() {
+func (q defaultQueue) stop() {
 	q.messageConsumer.Stop()
 }

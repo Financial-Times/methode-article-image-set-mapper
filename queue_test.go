@@ -155,6 +155,40 @@ func TestOnMessage_WarnIfErrorInImageSetMapper(t *testing.T) {
 	mockedProducer.AssertNotCalled(t, "SendMessage", "", mock.MatchedBy(func(msg producer.Message) bool { return true }))
 }
 
+func TestOnMessage_OneSendFailureShouldNotAffectOther(t *testing.T) {
+	sourceMsg := consumer.Message{
+		Headers: map[string]string {
+			"X-Request-Id": "tid_test123",
+			"Origin-System-Id": methodeSystemOrigin,
+			"Message-Timestamp": "2017-05-15T15:54:32.166Z",
+		},
+	}
+	nativeContent := NativeContent{
+		Type: compoundStory,
+		Value: "",
+	}
+	mockedMessageToNativeMapper := new(mockMessageToNativeMapper)
+	mockedMessageToNativeMapper.On("Map", mock.MatchedBy(func(source []byte) bool { return true })).Return(nativeContent, nil)
+	mockedImageSetMapper := new(mockImageSetMapper)
+	jsonImageSets := []JSONImageSet{JSONImageSet{UUID: "512c1f3d-e48c-4618-863c-94bc9d913b9b"}, JSONImageSet{ UUID: "43dc1ff3-6d6c-41f3-9196-56dcaa554905"}}
+	mockedImageSetMapper.On("Map", mock.MatchedBy(func(source NativeContent) bool { return true })).Return(jsonImageSets, nil)
+	mockedProducer := new(mockProducer)
+	mockedProducer.On("SendMessage", "", mock.MatchedBy(func(msg producer.Message) bool { return strings.Contains(msg.Body, "512c1f3d-e48c-4618-863c-94bc9d913b9b") })).Return(errors.New("error sending first msg"))
+	mockedProducer.On("SendMessage", "", mock.MatchedBy(func(msg producer.Message) bool { return strings.Contains(msg.Body, "43dc1ff3-6d6c-41f3-9196-56dcaa554905") })).Return(nil)
+	q := newQueue(nil, mockedProducer, mockedMessageToNativeMapper, mockedImageSetMapper)
+	q.onMessage(sourceMsg)
+	mockedProducer.AssertCalled(t, "SendMessage", "",
+		mock.MatchedBy(func(msg producer.Message) bool {
+			return strings.Contains(msg.Body, "512c1f3d-e48c-4618-863c-94bc9d913b9b") && strings.Contains(msg.Body, "2017-05-15T15:54:32.166Z")
+		}))
+	mockedProducer.AssertCalled(t, "SendMessage", "",
+		mock.MatchedBy(func(msg producer.Message) bool {
+			return strings.Contains(msg.Body, "43dc1ff3-6d6c-41f3-9196-56dcaa554905") && strings.Contains(msg.Body, "2017-05-15T15:54:32.166Z")
+		}))
+	mockedProducer.AssertCalled(t, "SendMessage", "", mock.MatchedBy(func(msg producer.Message) bool { return strings.Contains(msg.Body, "2017-05-15T15:54:32.166Z") }))
+	mockedProducer.AssertNumberOfCalls(t, "SendMessage", 2)
+}
+
 func TestBuildMessage_Ok(t *testing.T) {
 	q := newQueue(nil, nil, nil, nil)
 	actualMsg, err := q.buildMessage(JSONImageSet{

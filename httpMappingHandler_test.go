@@ -7,8 +7,8 @@ import (
 	"bytes"
 	"testing"
 	"github.com/stretchr/testify/assert"
-	"github.com/pkg/errors"
 	"strings"
+	"errors"
 )
 
 func TestHttpHandler_Ok(t *testing.T) {

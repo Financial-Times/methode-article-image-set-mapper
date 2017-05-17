@@ -5,7 +5,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestMap_Ok(t *testing.T) {
+func TestXMLJSONMap_Ok(t *testing.T) {
 	m := defaultImageSetToJSONMapper{}
 	source := []XMLImageSet{
 		XMLImageSet{

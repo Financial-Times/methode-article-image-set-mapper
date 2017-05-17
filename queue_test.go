@@ -199,9 +199,7 @@ func TestBuildMessage_Ok(t *testing.T) {
 			JSONMember{ UUID: "c6eeea75-748e-4b1c-a046-6e4c9d81ff25"},
 		},
 	}, "2017-05-15T15:54:32.166Z", "tid_test")
-	if err != nil {
-		assert.Error(t, err, "buildMessage() failed")
-	}
+	assert.NoError(t, err, "Error wasn't expected during buildMessage()")
 	assert.Equal(t, actualMsg.Headers["X-Request-Id"], "tid_test")
 	assert.NotEmpty(t, actualMsg.Headers["Message-Id"])
 	assert.Equal(t, actualMsg.Headers["Message-Type"], "cms-content-published")
@@ -231,7 +229,7 @@ func TestBuildMessages_Ok(t *testing.T) {
 		},
 	}, "2017-05-15T15:54:32.166Z", "tid_test")
 	if len(errs) != 0 {
-		assert.Error(t, nil, "buildMessages() failed")
+		assert.Fail(t, "errors are not empty")
 	}
 	assert.Equal(t, actualMsgs["5a8f3f37-3098-48f7-811a-f69d12f2b1be"].Headers["X-Request-Id"], "tid_test")
 	assert.NotEmpty(t, actualMsgs["5a8f3f37-3098-48f7-811a-f69d12f2b1be"].Headers["Message-Id"])

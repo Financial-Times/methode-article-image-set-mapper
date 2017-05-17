@@ -66,7 +66,7 @@ func main() {
 		a.queue.messageConsumer = messageConsumer
 		a.queue.startConsuming()
 		httpMappingHandler := newHTTPMappingHandler(messageToNativeMapper, imageSetMapper)
-		routing := newRouting(httpMappingHandler, a.args.appSystemCode, a.args.appName)
+		routing := newRouting(httpMappingHandler, &httpClient, consumerConfig, a.args.appSystemCode, a.args.appName)
 		go routing.listenAndServe(a.args.port)
 		a.waitForSignals()
 		a.teardown()

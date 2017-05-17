@@ -7,17 +7,22 @@ import (
 	"github.com/gorilla/mux"
 	"net/http"
 	"github.com/Sirupsen/logrus"
+	"github.com/Financial-Times/message-queue-gonsumer/consumer"
 )
 
 type routing struct {
 	httpMappingHandler    HTTPMappingHandler
 	router                *mux.Router
+	httpClient            *http.Client
+	consumerConfig        consumer.QueueConfig
 }
 
-func newRouting(httpMappingHandler HTTPMappingHandler, appSystemCode string, appName string) routing {
+func newRouting(httpMappingHandler HTTPMappingHandler, httpClient *http.Client, consumerConfig consumer.QueueConfig, appSystemCode string, appName string) routing {
 	r := routing{
 		httpMappingHandler:    httpMappingHandler,
 		router:                mux.NewRouter(),
+		httpClient: httpClient,
+		consumerConfig: consumerConfig,
 	}
 	r.routeProductionEndpoints()
 	r.routeAdminEndpoints(appSystemCode, appName)
@@ -29,7 +34,7 @@ func (r routing) routeProductionEndpoints() {
 }
 
 func (r routing) routeAdminEndpoints(appSystemCode string, appName string) {
-	healthService := newHealthService(&healthConfig{appSystemCode: appSystemCode, appName: appName})
+	healthService := newHealthService(&healthConfig{appSystemCode: appSystemCode, appName: appName}, r.httpClient, r.consumerConfig)
 
 	hc := health.HealthCheck{SystemCode: appSystemCode, Name: appName, Description: "Maps inline image-sets from bodies of Methode articles.", Checks: healthService.checks}
 	r.router.Path(healthPath).Handler(handlers.MethodHandler{"GET": http.HandlerFunc(health.Handler(hc))})

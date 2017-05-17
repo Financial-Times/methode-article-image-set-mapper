@@ -127,6 +127,14 @@
 			"versionExact": "v1.1.4"
 		},
 		{
+			"checksumSHA1": "6KZEap6v/5gD+tjiNbpD81kD61o=",
+			"path": "github.com/willf/bitset",
+			"revision": "988f4f24992fc745de53c42df0da6581e42a6686",
+			"revisionTime": "2017-05-05T19:16:46Z",
+			"version": "v1.1.2",
+			"versionExact": "v1.1.2"
+		},
+		{
 			"checksumSHA1": "oS0UZOGWVVsVciOQ8nZJ582mFF8=",
 			"path": "golang.org/x/sys/unix",
 			"revision": "9ccfe848b9db8435a24c424abbc07a921adf1df5",

@@ -11,6 +11,7 @@ const (
 	methodeAuthority = "http://api.ft.com/system/FTCOM-METHODE"
 	verify = "verify"
 	methodeDateFormat = "20060102150405"
+	uppDateFormat = "2006-01-02T03:04:05.000Z0700"
 )
 
 type XMLImageSetToJSONMapper interface {
@@ -45,8 +46,8 @@ func (m defaultImageSetToJSONMapper) Map(xmlImageSets []XMLImageSet, attributes 
 					IdentifierValue: uuid.String(),
 				},
 			},
-			PublishedDate: publishedDate.Format(time.RFC3339Nano),
-			FirstPublishedDate: firstPublishedDate.Format(time.RFC3339Nano),
+			PublishedDate: publishedDate.Format(uppDateFormat),
+			FirstPublishedDate: firstPublishedDate.Format(uppDateFormat),
 			CanBeDistributed: verify,
 			LastModified: lastModified,
 			PublishReference: publishReference,

@@ -50,7 +50,7 @@ func (h defaultHTTPMappingHandler) handle(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	imageSets, err := h.imageSetMapper.Map(native, time.Now().Format(time.RFC3339Nano), tid)
+	imageSets, err := h.imageSetMapper.Map(native, time.Now().Format(uppDateFormat), tid)
 	if err != nil {
 		h.writeToHTTP500(fmt.Sprintf("Error mapping the given content. %v\n", err), w)
 		return

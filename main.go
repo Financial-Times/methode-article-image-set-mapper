@@ -31,7 +31,7 @@ func main() {
 		}
 		logrus.Infof("methode-article-image-set-mapper is starting systemCode=%s appName=%s port=%s", a.args.appSystemCode, a.args.appName, a.args.port)
 		messageToNativeMapper := defaultMessageToNativeMapper{}
-		imageSetMapper := newImageSetMapper(defaultArticleToImageSetMapper{}, defaultImageSetToJSONMapper{})
+		imageSetMapper := newImageSetMapper(defaultArticleToImageSetMapper{}, defaultAttributesMapper{}, defaultImageSetToJSONMapper{})
 		httpClient := http.Client{
 			Transport: &http.Transport{
 				Proxy: http.ProxyFromEnvironment,

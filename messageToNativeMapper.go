@@ -14,6 +14,7 @@ type defaultMessageToNativeMapper struct{}
 type NativeContent struct {
 	Type  string `json:"type"`
 	Value string `json:"value"`
+	Attributes string `json:"attributes"`
 }
 
 func (m defaultMessageToNativeMapper) Map(source []byte) (NativeContent, error) {

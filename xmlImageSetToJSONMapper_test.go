@@ -6,6 +6,9 @@ import (
 )
 
 func TestXMLJSONMap_Ok(t *testing.T) {
+	// /ObjectMetadata/OutputChannels/DIFTcom/DIFTcomLastPublication
+	// /ObjectMetadata/OutputChannels/DIFTcom/DIFTcomInitialPublication
+
 	m := defaultImageSetToJSONMapper{}
 	source := []XMLImageSet{
 		XMLImageSet{
@@ -40,6 +43,12 @@ func TestXMLJSONMap_Ok(t *testing.T) {
 	expectedImageSets := []JSONImageSet{
 		JSONImageSet{
 			UUID: "1376ed33-0d81-3f62-ad62-a9b87b473556",
+			Identifiers: []JSONIdentifier{
+				JSONIdentifier {
+					Authority: "http://api.ft.com/system/FTCOM-METHODE",
+					IdentifierValue: "1376ed33-0d81-3f62-ad62-a9b87b473556",
+				},
+			},
 			Members: []JSONMember{
 				JSONMember{
 					UUID: "41614f4c-13c5-11e7-9469-afea892e4de3",
@@ -51,9 +60,20 @@ func TestXMLJSONMap_Ok(t *testing.T) {
 					UUID: "3ff3b7a8-13c5-11e7-9469-afea892e4de3",
 				},
 			},
+			PublishReference: "someref2",
+			LastModified: "2017-05-18T12:00:00.500Z",
+			PublishedDate: "2017-05-18T02:24:25.166Z",
+			FirstPublishedDate: "2017-05-18T02:24:00.000Z",
+			CanBeDistributed: "verify",
 		},
 		JSONImageSet{
 			UUID: "89e79a93-1bcc-39d6-bcc4-e77b82d3712f",
+			Identifiers: []JSONIdentifier{
+				JSONIdentifier {
+					Authority: "http://api.ft.com/system/FTCOM-METHODE",
+					IdentifierValue: "89e79a93-1bcc-39d6-bcc4-e77b82d3712f",
+				},
+			},
 			Members: []JSONMember{
 				JSONMember{
 					UUID: "2fe0b459-a23e-452d-a2aa-2e0503982ed2",
@@ -65,6 +85,11 @@ func TestXMLJSONMap_Ok(t *testing.T) {
 					UUID: "2acf1caa-8014-48ec-b070-a0ffbc45d1d5",
 				},
 			},
+			PublishReference: "someref2",
+			LastModified: "2017-05-18T12:00:00.500Z",
+			PublishedDate: "2017-05-18T02:24:25.166Z",
+			FirstPublishedDate: "2017-05-18T02:24:00.000Z",
+			CanBeDistributed: "verify",
 		},
 	}
 	assert.Equal(t, expectedImageSets, actualImageSets)

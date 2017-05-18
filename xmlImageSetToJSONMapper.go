@@ -14,12 +14,12 @@ const (
 )
 
 type XMLImageSetToJSONMapper interface {
-	Map(xmlImageSets []XMLImageSet, attributes xmlAttributes) ([]JSONImageSet, error)
+	Map(xmlImageSets []XMLImageSet, attributes xmlAttributes, lastModified string, publishReference string) ([]JSONImageSet, error)
 }
 
 type defaultImageSetToJSONMapper struct{}
 
-func (m defaultImageSetToJSONMapper) Map(xmlImageSets []XMLImageSet, attributes xmlAttributes) ([]JSONImageSet, error) {
+func (m defaultImageSetToJSONMapper) Map(xmlImageSets []XMLImageSet, attributes xmlAttributes, lastModified string, publishReference string) ([]JSONImageSet, error) {
 	jsonImageSets := make([]JSONImageSet, 0)
 	for _, xmlImageSet := range xmlImageSets {
 		members := []JSONMember{
@@ -48,6 +48,8 @@ func (m defaultImageSetToJSONMapper) Map(xmlImageSets []XMLImageSet, attributes 
 			PublishedDate: publishedDate.Format(time.RFC3339Nano),
 			FirstPublishedDate: firstPublishedDate.Format(time.RFC3339Nano),
 			CanBeDistributed: verify,
+			LastModified: lastModified,
+			PublishReference: publishReference,
 		}
 		jsonImageSets = append(jsonImageSets, jsonImageSet)
 	}

@@ -6,6 +6,8 @@ import (
 	"github.com/Sirupsen/logrus"
 	"io/ioutil"
 	"net/http"
+	trans "github.com/Financial-Times/transactionid-utils-go"
+	"time"
 )
 
 type ErrorMessage struct {
@@ -33,6 +35,8 @@ func newHTTPMappingHandler(messageToNativeMapper MessageToNativeMapper, imageSet
 }
 
 func (h defaultHTTPMappingHandler) handle(w http.ResponseWriter, r *http.Request) {
+	tid := trans.GetTransactionIDFromRequest(r)
+
 	body, err := ioutil.ReadAll(r.Body)
 	defer h.closeResponseBody(r)
 	if err != nil {
@@ -46,7 +50,7 @@ func (h defaultHTTPMappingHandler) handle(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	imageSets, err := h.imageSetMapper.Map(native)
+	imageSets, err := h.imageSetMapper.Map(native, time.Now().Format(time.RFC3339Nano), tid)
 	if err != nil {
 		h.writeToHTTP500(fmt.Sprintf("Error mapping the given content. %v\n", err), w)
 		return

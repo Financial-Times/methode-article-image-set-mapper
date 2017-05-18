@@ -69,7 +69,7 @@ func (q defaultQueue) onMessage(m consumer.Message) {
 		return
 	}
 
-	imageSets, err := q.imageSetMapper.Map(native)
+	imageSets, err := q.imageSetMapper.Map(native, lastModified, tid)
 	if err != nil {
 		logrus.Errorf("Error mapping message to image-sets transactionId=%v %v", tid, err)
 		return

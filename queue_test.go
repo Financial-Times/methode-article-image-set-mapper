@@ -301,7 +301,7 @@ type mockImageSetMapper struct {
 	mock.Mock
 }
 
-func (m *mockImageSetMapper) Map(source NativeContent) ([]JSONImageSet, error) {
+func (m *mockImageSetMapper) Map(source NativeContent, lastModified string, publishReference string) ([]JSONImageSet, error) {
 	args := m.Called(source)
 	return args.Get(0).([]JSONImageSet), args.Error(1)
 }

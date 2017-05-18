@@ -9,7 +9,7 @@ import (
 const compoundStory = "EOM::CompoundStory"
 
 type ImageSetMapper interface {
-	Map(source NativeContent) ([]JSONImageSet, error)
+	Map(source NativeContent, lastModified string, publishReference string) ([]JSONImageSet, error)
 }
 
 type defaultImageSetMapper struct {
@@ -27,7 +27,7 @@ func newImageSetMapper(articleToImageSetMApper ArticleToImageSetMapper, attribut
 	}
 }
 
-func (m defaultImageSetMapper) Map(source NativeContent) ([]JSONImageSet, error) {
+func (m defaultImageSetMapper) Map(source NativeContent, lastModified string, publishReference string) ([]JSONImageSet, error) {
 	valueXml, err := base64.StdEncoding.DecodeString(source.Value)
 	if err != nil {
 		msg := fmt.Errorf("Cound't decode string as base64. %v\n", err)
@@ -49,7 +49,7 @@ func (m defaultImageSetMapper) Map(source NativeContent) ([]JSONImageSet, error)
 		return nil, msg
 	}
 
-	jsonImageSets, err := m.xmlImageSetToJSONMapper.Map(xmlImageSets, attributes)
+	jsonImageSets, err := m.xmlImageSetToJSONMapper.Map(xmlImageSets, attributes, lastModified, publishReference)
 	if err != nil {
 		msg := fmt.Errorf("Couldn't map ImageSets from model soruced from XML to model targeted for JSON. %v\n", err)
 		logrus.Warn(msg)

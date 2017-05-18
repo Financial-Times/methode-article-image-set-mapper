@@ -49,6 +49,14 @@
 			"versionExact": "0.1.0"
 		},
 		{
+			"checksumSHA1": "+sjiZBzrsk91W1A3Md1azCkZadg=",
+			"path": "github.com/Financial-Times/transactionid-utils-go",
+			"revision": "df2f00c734957c9dd651ce23ab0e0902504c7636",
+			"revisionTime": "2017-03-28T16:39:54Z",
+			"version": "v0.2.0",
+			"versionExact": "v0.2.0"
+		},
+		{
 			"checksumSHA1": "OctXH9nxfVzFlVWD7h4K5e+x5/M=",
 			"path": "github.com/Financial-Times/uuid-utils-go",
 			"revision": "e22658edd0f130936e99079bf844bde7087c914c",
@@ -145,6 +153,12 @@
 			"revisionTime": "2017-05-05T19:16:46Z",
 			"version": "v1.1.2",
 			"versionExact": "v1.1.2"
+		},
+		{
+			"checksumSHA1": "Y+HGqEkYM15ir+J93MEaHdyFy0c=",
+			"path": "golang.org/x/net/context",
+			"revision": "513929065c19401a1c7b76ecd942f9f86a0c061b",
+			"revisionTime": "2017-05-12T22:20:15Z"
 		},
 		{
 			"checksumSHA1": "oS0UZOGWVVsVciOQ8nZJ582mFF8=",

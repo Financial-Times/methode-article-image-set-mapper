@@ -6,9 +6,6 @@ import (
 )
 
 func TestXMLJSONMap_Ok(t *testing.T) {
-	// /ObjectMetadata/OutputChannels/DIFTcom/DIFTcomLastPublication
-	// /ObjectMetadata/OutputChannels/DIFTcom/DIFTcomInitialPublication
-
 	m := defaultImageSetToJSONMapper{}
 	source := []XMLImageSet{
 		XMLImageSet{
@@ -36,7 +33,15 @@ func TestXMLJSONMap_Ok(t *testing.T) {
 			},
 		},
 	}
-	actualImageSets, err := m.Map(source)
+	xmlAttributes := xmlAttributes {
+		OutputChannels: OutputChannels {
+			DIFTcom {
+				DIFTcomLastPublication: "20170518022425",
+				DIFTcomInitialPublication: "20170518022400",
+			},
+		},
+	}
+	actualImageSets, err := m.Map(source, xmlAttributes)
 	if err != nil {
 		assert.Error(t, err, "error mapping set")
 	}
@@ -60,10 +65,10 @@ func TestXMLJSONMap_Ok(t *testing.T) {
 					UUID: "3ff3b7a8-13c5-11e7-9469-afea892e4de3",
 				},
 			},
-			PublishReference: "someref2",
-			LastModified: "2017-05-18T12:00:00.500Z",
-			PublishedDate: "2017-05-18T02:24:25.166Z",
-			FirstPublishedDate: "2017-05-18T02:24:00.000Z",
+			//PublishReference: "someref2",
+			//LastModified: "2017-05-18T12:00:00.500Z",
+			PublishedDate: "2017-05-18T02:24:25Z",
+			FirstPublishedDate: "2017-05-18T02:24:00Z",
 			CanBeDistributed: "verify",
 		},
 		JSONImageSet{
@@ -85,10 +90,10 @@ func TestXMLJSONMap_Ok(t *testing.T) {
 					UUID: "2acf1caa-8014-48ec-b070-a0ffbc45d1d5",
 				},
 			},
-			PublishReference: "someref2",
-			LastModified: "2017-05-18T12:00:00.500Z",
-			PublishedDate: "2017-05-18T02:24:25.166Z",
-			FirstPublishedDate: "2017-05-18T02:24:00.000Z",
+			//PublishReference: "someref2",
+			//LastModified: "2017-05-18T12:00:00.500Z",
+			PublishedDate: "2017-05-18T02:24:25Z",
+			FirstPublishedDate: "2017-05-18T02:24:00Z",
 			CanBeDistributed: "verify",
 		},
 	}

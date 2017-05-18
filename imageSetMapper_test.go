@@ -10,6 +10,8 @@ import (
 func TestISMap_Ok(t *testing.T) {
 	mockedArticleToImageSetMapper := new(mockedArticleToImageSetMapper)
 	mockedArticleToImageSetMapper.On("Map", mock.MatchedBy(func(source []byte) bool { return true })).Return([]XMLImageSet{}, nil)
+	mockedAttributesMapper := new(mockAttributesMapper)
+	mockedAttributesMapper.On("Map", mock.MatchedBy(func(source string) bool{ return true })).Return(xmlAttributes{}, nil)
 	mockedXmlImageSetToJSONMapper := new(mockedXmlImageSetToJSONMapper)
 	expectedJsonImageSets := []JSONImageSet {
 		JSONImageSet{
@@ -42,7 +44,7 @@ func TestISMap_Ok(t *testing.T) {
 		},
 	}
 	mockedXmlImageSetToJSONMapper.On("Map", mock.MatchedBy(func(source []XMLImageSet) bool { return true })).Return(expectedJsonImageSets, nil)
-	m := newImageSetMapper(mockedArticleToImageSetMapper, mockedXmlImageSetToJSONMapper)
+	m := newImageSetMapper(mockedArticleToImageSetMapper, mockedAttributesMapper, mockedXmlImageSetToJSONMapper)
 	source := NativeContent{Type:compoundStory, Value:"PGRvYz48L2RvYz4="}
 	actualImageSets, err := m.Map(source)
 	assert.NoError(t, err, "Error wasn't expected during mapping")
@@ -50,7 +52,7 @@ func TestISMap_Ok(t *testing.T) {
 }
 
 func TestISMap_ErrorBase64(t *testing.T) {
-	m := newImageSetMapper(nil, nil)
+	m := newImageSetMapper(nil, nil, nil)
 	source := NativeContent{Type:compoundStory, Value:"***"}
 	_, err := m.Map(source)
 	assert.Error(t, err, "Error was expected during base64 decoding")
@@ -59,10 +61,23 @@ func TestISMap_ErrorBase64(t *testing.T) {
 func TestISMap_ErrorXmlMapping(t *testing.T) {
 	mockedArticleToImageSetMapper := new(mockedArticleToImageSetMapper)
 	mockedArticleToImageSetMapper.On("Map", mock.MatchedBy(func(source []byte) bool { return true })).Return([]XMLImageSet{}, errors.New("error mapping article to xml imageSets"))
-	m := newImageSetMapper(mockedArticleToImageSetMapper, nil)
+	m := newImageSetMapper(mockedArticleToImageSetMapper, nil, nil)
 	source := NativeContent{Type:compoundStory, Value:"PGRvYz48L2RvYz4="}
 	_, err := m.Map(source)
 	assert.Error(t, err, "Error was expected during mapping article to xml imageSets")
+}
+
+func TestISMap_ErrorAttributesMapping(t *testing.T) {
+	mockedArticleToImageSetMapper := new(mockedArticleToImageSetMapper)
+	mockedArticleToImageSetMapper.On("Map", mock.MatchedBy(func(source []byte) bool { return true })).Return([]XMLImageSet{}, nil)
+	mockedXmlImageSetToJSONMapper := new(mockedXmlImageSetToJSONMapper)
+	mockedXmlImageSetToJSONMapper.On("Map", mock.MatchedBy(func(source []XMLImageSet) bool { return true })).Return([]JSONImageSet{}, nil)
+	mockedAttributesMapper := new(mockAttributesMapper)
+	mockedAttributesMapper.On("Map", mock.MatchedBy(func(source string) bool{ return true })).Return(xmlAttributes{}, errors.New("error mapping attributes"))
+	m := newImageSetMapper(mockedArticleToImageSetMapper, mockedAttributesMapper, mockedXmlImageSetToJSONMapper)
+	source := NativeContent{Type:compoundStory, Value:"PGRvYz48L2RvYz4="}
+	_, err := m.Map(source)
+	assert.Error(t, err, "Error was expected during mapping xml attributes")
 }
 
 func TestISMap_ErrorJsonMapping(t *testing.T) {
@@ -70,7 +85,9 @@ func TestISMap_ErrorJsonMapping(t *testing.T) {
 	mockedArticleToImageSetMapper.On("Map", mock.MatchedBy(func(source []byte) bool { return true })).Return([]XMLImageSet{}, nil)
 	mockedXmlImageSetToJSONMapper := new(mockedXmlImageSetToJSONMapper)
 	mockedXmlImageSetToJSONMapper.On("Map", mock.MatchedBy(func(source []XMLImageSet) bool { return true })).Return([]JSONImageSet{}, errors.New("error mapping xml image set to json model"))
-	m := newImageSetMapper(mockedArticleToImageSetMapper, mockedXmlImageSetToJSONMapper)
+	mockedAttributesMapper := new(mockAttributesMapper)
+	mockedAttributesMapper.On("Map", mock.MatchedBy(func(source string) bool{ return true })).Return(xmlAttributes{}, nil)
+	m := newImageSetMapper(mockedArticleToImageSetMapper, mockedAttributesMapper, mockedXmlImageSetToJSONMapper)
 	source := NativeContent{Type:compoundStory, Value:"PGRvYz48L2RvYz4="}
 	_, err := m.Map(source)
 	assert.Error(t, err, "Error was expected during mapping xml image set to json model")
@@ -89,7 +106,16 @@ type mockedXmlImageSetToJSONMapper struct {
 	mock.Mock
 }
 
-func (m *mockedXmlImageSetToJSONMapper) Map(xmlImageSets []XMLImageSet) ([]JSONImageSet, error) {
+func (m *mockedXmlImageSetToJSONMapper) Map(xmlImageSets []XMLImageSet, attributes xmlAttributes) ([]JSONImageSet, error) {
 	args := m.Called(xmlImageSets)
 	return args.Get(0).([]JSONImageSet), args.Error(1)
+}
+
+type mockAttributesMapper struct {
+	mock.Mock
+}
+
+func (m *mockAttributesMapper) Map(source string) (xmlAttributes, error) {
+	args := m.Called(source)
+	return args.Get(0).(xmlAttributes), args.Error(1)
 }

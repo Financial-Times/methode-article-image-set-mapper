@@ -1,9 +1,9 @@
 package main
 
 import (
-	"strconv"
 	"fmt"
 	"encoding/xml"
+	"strings"
 )
 
 type AttributesMapper interface {
@@ -13,13 +13,11 @@ type AttributesMapper interface {
 type defaultAttributesMapper struct {}
 
 func (m defaultAttributesMapper) Map(source string) (xmlAttributes, error) {
-	unquotedSource, err := strconv.Unquote(source)
-	if err != nil {
-		return  xmlAttributes{}, fmt.Errorf("Couldn't unqoute attributes %v", err)
-	}
+	strippedNewline := strings.Replace(source, `\n`, "", -1)
+	manualUnqouted := strings.Replace(strippedNewline, `\"`, `"`, -1)
 
 	var attributes xmlAttributes
-	err = xml.Unmarshal([]byte(unquotedSource), &attributes)
+	err := xml.Unmarshal([]byte(manualUnqouted), &attributes)
 	if err != nil {
 		return xmlAttributes{}, fmt.Errorf("Cound't unmarshall native attributes as XML doucment. %v", err)
 	}

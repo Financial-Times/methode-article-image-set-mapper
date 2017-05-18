@@ -1,10 +1,9 @@
 package main
 
-type xmlAttributes struct {
-	ObjectMetadata ObjectMetadata `xml:"ObjectMetadata"`
-}
+import "encoding/xml"
 
-type ObjectMetadata struct {
+type xmlAttributes struct {
+	XMLName xml.Name `xml:"ObjectMetadata"`
 	OutputChannels OutputChannels `xml:"OutputChannels"`
 }
 

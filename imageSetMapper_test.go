@@ -4,7 +4,7 @@ import (
 	"testing"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
-	"github.com/pkg/errors"
+	"errors"
 )
 
 func TestISMap_Ok(t *testing.T) {

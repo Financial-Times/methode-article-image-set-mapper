@@ -15,7 +15,7 @@ func (m defaultArticleToImageSetMapper) Map(source []byte) ([]XMLImageSet, error
 	var article xmlArticle
 	err := xml.Unmarshal(source, &article)
 	if err != nil {
-		return nil, fmt.Errorf("Cound't unmarshall native value as XML doucment. %v", err)
+		return nil, fmt.Errorf("Cound't unmarshall native value as XML document. %v", err)
 	}
 	return article.Body.ImageSets, nil
 }

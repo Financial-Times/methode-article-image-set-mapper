@@ -51,7 +51,7 @@ func (m defaultImageSetMapper) Map(source NativeContent, lastModified string, pu
 
 	jsonImageSets, err := m.xmlImageSetToJSONMapper.Map(xmlImageSets, attributes, lastModified, publishReference)
 	if err != nil {
-		msg := fmt.Errorf("Couldn't map ImageSets from model soruced from XML to model targeted for JSON. %v\n", err)
+		msg := fmt.Errorf("Couldn't map ImageSets from model sourced from XML to model targeted for JSON. %v\n", err)
 		logrus.Warn(msg)
 		return nil, msg
 	}

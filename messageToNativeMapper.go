@@ -21,7 +21,7 @@ func (m defaultMessageToNativeMapper) Map(source []byte) (NativeContent, error) 
 	var native NativeContent
 	err := json.Unmarshal(source, &native)
 	if err != nil {
-		return NativeContent{}, fmt.Errorf("Cound't decode native content as JSON doucment. %v\n", err)
+		return NativeContent{}, fmt.Errorf("Cound't decode native content as JSON document. %v\n", err)
 	}
 	return native, nil
 }

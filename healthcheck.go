@@ -78,11 +78,19 @@ func (h *healthService) checkMessageQueueProxyReachable(address string, topic st
 		logrus.Warnf("Could not connect to proxy: %v", err.Error())
 		return err
 	}
-	defer func() { _ = resp.Body.Close() }()
+	defer func() {
+		err = resp.Body.Close()
+		if err != nil {
+			logrus.Warnf("Couldn't close healthcheck dependency service's response body %v", err)
+		}
+	}()
 	if resp.StatusCode != http.StatusOK {
 		return fmt.Errorf("Proxy returned status: %d", resp.StatusCode)
 	}
 	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		logrus.Warnf("Couldn't read healthcheck dependency service's response body %v", err)
+	}
 	return checkIfTopicIsPresent(body, topic)
 }
 

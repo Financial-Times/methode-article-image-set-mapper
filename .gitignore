@@ -3,3 +3,5 @@
 .idea
 methode-article-image-set-mapper
 vendor/*/
+.project
+.vscode

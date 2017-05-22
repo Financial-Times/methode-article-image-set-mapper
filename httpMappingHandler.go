@@ -36,6 +36,7 @@ func newHTTPMappingHandler(messageToNativeMapper MessageToNativeMapper, imageSet
 
 func (h defaultHTTPMappingHandler) handle(w http.ResponseWriter, r *http.Request) {
 	tid := trans.GetTransactionIDFromRequest(r)
+	w.Header().Add("Content-Type", "application/json;charset=utf-8")
 
 	body, err := ioutil.ReadAll(r.Body)
 	defer h.closeRequestBody(r)
@@ -62,7 +63,6 @@ func (h defaultHTTPMappingHandler) handle(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	w.Header().Add("Content-Type", "application/json;charset=utf-8")
 	_, err = w.Write(marshaledJSONImageSets)
 	if err != nil {
 		h.warnAndWriteToHTTP500(fmt.Sprintf("Cound't write response. %v\n", err), w)
@@ -80,7 +80,6 @@ func (h defaultHTTPMappingHandler) writeToHTTP500(msg string, w http.ResponseWri
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	w.Header().Add("Content-Type", "application/json;charset=utf-8")
 	w.WriteHeader(http.StatusInternalServerError)
 	_, err := w.Write(httpMsg)
 	if err != nil {

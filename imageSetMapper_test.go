@@ -96,30 +96,3 @@ func TestISMap_ErrorJsonMapping(t *testing.T) {
 	_, err := m.Map(source, "2017-05-17T13:46:01.100Z", "tid_test")
 	assert.Error(t, err, "Error was expected during mapping xml image set to json model")
 }
-
-type mockedArticleToImageSetMapper struct{
-	mock.Mock
-}
-
-func (m *mockedArticleToImageSetMapper) Map(source []byte) ([]XMLImageSet, error) {
-	args := m.Called(source)
-	return args.Get(0).([]XMLImageSet), args.Error(1)
-}
-
-type mockedXmlImageSetToJSONMapper struct {
-	mock.Mock
-}
-
-func (m *mockedXmlImageSetToJSONMapper) Map(xmlImageSets []XMLImageSet, attributes xmlAttributes, lastModified string, publishReference string) ([]JSONImageSet, error) {
-	args := m.Called(xmlImageSets)
-	return args.Get(0).([]JSONImageSet), args.Error(1)
-}
-
-type mockAttributesMapper struct {
-	mock.Mock
-}
-
-func (m *mockAttributesMapper) Map(source string) (xmlAttributes, error) {
-	args := m.Called(source)
-	return args.Get(0).(xmlAttributes), args.Error(1)
-}

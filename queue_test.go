@@ -273,35 +273,3 @@ func TestBuildMessages_Ok(t *testing.T) {
 	assert.Equal(t, actualMsgs["270c0151-7742-4c1e-b77e-a5557881a042"].Body, `{"contentUri":"http://methode-article-image-set-mapper.svc.ft.com/image-set/model/270c0151-7742-4c1e-b77e-a5557881a042","payload":{"uuid":"270c0151-7742-4c1e-b77e-a5557881a042","identifiers":[{"authority":"http://api.ft.com/system/FTCOM-METHODE","identifierValue":"270c0151-7742-4c1e-b77e-a5557881a042"}],"members":[{"uuid":"667ee7f3-4f58-4080-a6f9-9b16b633dea8"},{"uuid":"a0513a50-08d1-43f6-af2b-7e7dc4d40b31"},{"uuid":"47e5a693-cd39-4ede-a016-244e6413a7fa"}],"publishReference":"","lastModified":"","publishedDate":"2017-05-18T02:24:25Z","firstPublishedDate":"2017-05-18T02:24:00Z","canBeDistributed":"verify"},"lastModified":"2017-05-15T15:54:32.166Z"}`)
 
 }
-
-type mockProducer struct{
-	mock.Mock
-}
-
-func (p *mockProducer) SendMessage(key string, msg producer.Message) error {
-	args := p.Called(key, msg)
-	return args.Error(0)
-}
-
-func (p *mockProducer) ConnectivityCheck() (string, error) {
-	args := p.Called()
-	return args.String(0), args.Error(1)
-}
-
-type mockMessageToNativeMapper struct {
-	mock.Mock
-}
-
-func (m *mockMessageToNativeMapper) Map(source []byte) (NativeContent, error) {
-	args := m.Called(source)
-	return args.Get(0).(NativeContent), args.Error(1)
-}
-
-type mockImageSetMapper struct {
-	mock.Mock
-}
-
-func (m *mockImageSetMapper) Map(source NativeContent, lastModified string, publishReference string) ([]JSONImageSet, error) {
-	args := m.Called(source)
-	return args.Get(0).([]JSONImageSet), args.Error(1)
-}

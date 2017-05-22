@@ -1,11 +1,11 @@
 package main
 
 import (
-	"github.com/stretchr/testify/mock"
 	"github.com/Financial-Times/message-queue-go-producer/producer"
+	"github.com/stretchr/testify/mock"
 )
 
-type mockProducer struct{
+type mockProducer struct {
 	mock.Mock
 }
 
@@ -37,8 +37,7 @@ func (m *mockImageSetMapper) Map(source NativeContent, lastModified string, publ
 	return args.Get(0).([]JSONImageSet), args.Error(1)
 }
 
-
-type mockedArticleToImageSetMapper struct{
+type mockedArticleToImageSetMapper struct {
 	mock.Mock
 }
 

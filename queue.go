@@ -3,13 +3,13 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"github.com/Financial-Times/message-queue-go-producer/producer"
 	"github.com/Financial-Times/message-queue-gonsumer/consumer"
 	"github.com/Sirupsen/logrus"
 	gouuid "github.com/satori/go.uuid"
 	"sync"
 	"time"
-	"fmt"
 )
 
 const (
@@ -34,11 +34,11 @@ type defaultQueue struct {
 func newQueue(messageConsumer consumer.MessageConsumer, messageProducer producer.MessageProducer,
 	messageToNativeMapper MessageToNativeMapper, imageSetMapper ImageSetMapper) defaultQueue {
 	queue := defaultQueue{
-		messageConsumer: messageConsumer,
-		messageProducer: messageProducer,
+		messageConsumer:       messageConsumer,
+		messageProducer:       messageProducer,
 		messageToNativeMapper: messageToNativeMapper,
 		imageSetMapper:        imageSetMapper,
-		consumerWaitGroup: sync.WaitGroup{},
+		consumerWaitGroup:     sync.WaitGroup{},
 	}
 	return queue
 }

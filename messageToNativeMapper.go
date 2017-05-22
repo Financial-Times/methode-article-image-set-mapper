@@ -12,8 +12,8 @@ type MessageToNativeMapper interface {
 type defaultMessageToNativeMapper struct{}
 
 type NativeContent struct {
-	Type  string `json:"type"`
-	Value string `json:"value"`
+	Type       string `json:"type"`
+	Value      string `json:"value"`
 	Attributes string `json:"attributes"`
 }
 

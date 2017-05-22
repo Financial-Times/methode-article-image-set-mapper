@@ -1,23 +1,23 @@
 package main
 
 import (
+	"fmt"
+	"github.com/Financial-Times/message-queue-go-producer/producer"
+	"github.com/Financial-Times/message-queue-gonsumer/consumer"
 	"github.com/Sirupsen/logrus"
 	"github.com/jawher/mow.cli"
+	"net"
+	"net/http"
 	"os"
 	"os/signal"
 	"sync"
 	"syscall"
-	"github.com/Financial-Times/message-queue-gonsumer/consumer"
-	"github.com/Financial-Times/message-queue-go-producer/producer"
-	"net/http"
-	"net"
 	"time"
-	"fmt"
 )
 
 type app struct {
-	args             args
-	queue            defaultQueue
+	args  args
+	queue defaultQueue
 }
 
 func main() {

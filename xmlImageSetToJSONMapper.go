@@ -1,17 +1,17 @@
 package main
 
 import (
+	"fmt"
 	"github.com/Financial-Times/uuid-utils-go"
 	"strings"
 	"time"
-	"fmt"
 )
 
 const (
-	methodeAuthority = "http://api.ft.com/system/FTCOM-METHODE"
-	verify = "verify"
+	methodeAuthority  = "http://api.ft.com/system/FTCOM-METHODE"
+	verify            = "verify"
 	methodeDateFormat = "20060102150405"
-	uppDateFormat = "2006-01-02T03:04:05.000Z0700"
+	uppDateFormat     = "2006-01-02T03:04:05.000Z0700"
 )
 
 type XMLImageSetToJSONMapper interface {
@@ -38,19 +38,19 @@ func (m defaultImageSetToJSONMapper) Map(xmlImageSets []XMLImageSet, attributes 
 			return nil, fmt.Errorf("Couldn't parse native initial published date %v %v", attributes.OutputChannels.DIFTcom.DIFTcomInitialPublication, err)
 		}
 		jsonImageSet := JSONImageSet{
-			UUID: uuid.String(),
+			UUID:    uuid.String(),
 			Members: members,
 			Identifiers: []JSONIdentifier{
 				JSONIdentifier{
-					Authority: methodeAuthority,
+					Authority:       methodeAuthority,
 					IdentifierValue: uuid.String(),
 				},
 			},
-			PublishedDate: publishedDate.Format(uppDateFormat),
+			PublishedDate:      publishedDate.Format(uppDateFormat),
 			FirstPublishedDate: firstPublishedDate.Format(uppDateFormat),
-			CanBeDistributed: verify,
-			LastModified: lastModified,
-			PublishReference: publishReference,
+			CanBeDistributed:   verify,
+			LastModified:       lastModified,
+			PublishReference:   publishReference,
 		}
 		jsonImageSets = append(jsonImageSets, jsonImageSet)
 	}

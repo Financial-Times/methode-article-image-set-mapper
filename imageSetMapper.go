@@ -22,7 +22,7 @@ func newImageSetMapper(articleToImageSetMApper ArticleToImageSetMapper, attribut
 	xmlImageSetToJSONMapper XMLImageSetToJSONMapper) ImageSetMapper {
 	return defaultImageSetMapper{
 		articleToImageSetMapper: articleToImageSetMApper,
-		attributesMapper: attributesMapper,
+		attributesMapper:        attributesMapper,
 		xmlImageSetToJSONMapper: xmlImageSetToJSONMapper,
 	}
 }
@@ -42,7 +42,7 @@ func (m defaultImageSetMapper) Map(source NativeContent, lastModified string, pu
 		return nil, msg
 	}
 
-	attributes, err  := m.attributesMapper.Map(source.Attributes)
+	attributes, err := m.attributesMapper.Map(source.Attributes)
 	if err != nil {
 		msg := fmt.Errorf("Couldn't parse attributes XML. %v\n", err)
 		logrus.Warn(msg)

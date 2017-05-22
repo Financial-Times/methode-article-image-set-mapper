@@ -1,8 +1,8 @@
 package main
 
 import (
-	"fmt"
 	"encoding/xml"
+	"fmt"
 	"strings"
 )
 
@@ -10,7 +10,7 @@ type AttributesMapper interface {
 	Map(source string) (xmlAttributes, error)
 }
 
-type defaultAttributesMapper struct {}
+type defaultAttributesMapper struct{}
 
 func (m defaultAttributesMapper) Map(source string) (xmlAttributes, error) {
 	strippedNewline := strings.Replace(source, `\n`, "", -1)

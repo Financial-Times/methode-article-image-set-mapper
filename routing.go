@@ -2,27 +2,27 @@ package main
 
 import (
 	health "github.com/Financial-Times/go-fthealth/v1_1"
+	"github.com/Financial-Times/message-queue-gonsumer/consumer"
 	status "github.com/Financial-Times/service-status-go/httphandlers"
+	"github.com/Sirupsen/logrus"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"net/http"
-	"github.com/Sirupsen/logrus"
-	"github.com/Financial-Times/message-queue-gonsumer/consumer"
 )
 
 type routing struct {
-	httpMappingHandler    HTTPMappingHandler
-	router                *mux.Router
-	httpClient            *http.Client
-	consumerConfig        consumer.QueueConfig
+	httpMappingHandler HTTPMappingHandler
+	router             *mux.Router
+	httpClient         *http.Client
+	consumerConfig     consumer.QueueConfig
 }
 
 func newRouting(httpMappingHandler HTTPMappingHandler, httpClient *http.Client, consumerConfig consumer.QueueConfig, appSystemCode string, appName string) routing {
 	r := routing{
-		httpMappingHandler:    httpMappingHandler,
-		router:                mux.NewRouter(),
-		httpClient: httpClient,
-		consumerConfig: consumerConfig,
+		httpMappingHandler: httpMappingHandler,
+		router:             mux.NewRouter(),
+		httpClient:         httpClient,
+		consumerConfig:     consumerConfig,
 	}
 	r.routeProductionEndpoints()
 	r.routeAdminEndpoints(appSystemCode, appName)

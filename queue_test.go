@@ -1,31 +1,31 @@
 package main
 
 import (
-	"testing"
-	"github.com/Financial-Times/message-queue-gonsumer/consumer"
+	"errors"
 	"github.com/Financial-Times/message-queue-go-producer/producer"
+	"github.com/Financial-Times/message-queue-gonsumer/consumer"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"strings"
-	"github.com/stretchr/testify/assert"
-	"errors"
+	"testing"
 )
 
 func TestOnMessage_Ok(t *testing.T) {
 	sourceMsg := consumer.Message{
-		Headers: map[string]string {
-			"X-Request-Id": "tid_test123",
-			"Origin-System-Id": methodeSystemOrigin,
+		Headers: map[string]string{
+			"X-Request-Id":      "tid_test123",
+			"Origin-System-Id":  methodeSystemOrigin,
 			"Message-Timestamp": "2017-05-15T15:54:32.166Z",
 		},
 	}
 	nativeContent := NativeContent{
-		Type: compoundStory,
+		Type:  compoundStory,
 		Value: "",
 	}
 	mockedMessageToNativeMapper := new(mockMessageToNativeMapper)
 	mockedMessageToNativeMapper.On("Map", mock.MatchedBy(func(source []byte) bool { return true })).Return(nativeContent, nil)
 	mockedImageSetMapper := new(mockImageSetMapper)
-	jsonImageSets := []JSONImageSet{JSONImageSet{UUID: "512c1f3d-e48c-4618-863c-94bc9d913b9b"}, JSONImageSet{ UUID: "43dc1ff3-6d6c-41f3-9196-56dcaa554905"}}
+	jsonImageSets := []JSONImageSet{JSONImageSet{UUID: "512c1f3d-e48c-4618-863c-94bc9d913b9b"}, JSONImageSet{UUID: "43dc1ff3-6d6c-41f3-9196-56dcaa554905"}}
 	mockedImageSetMapper.On("Map", mock.MatchedBy(func(source NativeContent) bool { return true })).Return(jsonImageSets, nil)
 	mockedProducer := new(mockProducer)
 	mockedProducer.On("SendMessage", "", mock.MatchedBy(func(msg producer.Message) bool { return true })).Return(nil)
@@ -45,19 +45,19 @@ func TestOnMessage_Ok(t *testing.T) {
 
 func TestOnMessage_OkWhenNoTimestamp(t *testing.T) {
 	sourceMsg := consumer.Message{
-		Headers: map[string]string {
-			"X-Request-Id": "tid_test123",
+		Headers: map[string]string{
+			"X-Request-Id":     "tid_test123",
 			"Origin-System-Id": methodeSystemOrigin,
 		},
 	}
 	nativeContent := NativeContent{
-		Type: compoundStory,
+		Type:  compoundStory,
 		Value: "",
 	}
 	mockedMessageToNativeMapper := new(mockMessageToNativeMapper)
 	mockedMessageToNativeMapper.On("Map", mock.MatchedBy(func(source []byte) bool { return true })).Return(nativeContent, nil)
 	mockedImageSetMapper := new(mockImageSetMapper)
-	jsonImageSets := []JSONImageSet{JSONImageSet{UUID: "512c1f3d-e48c-4618-863c-94bc9d913b9b"}, JSONImageSet{ UUID: "43dc1ff3-6d6c-41f3-9196-56dcaa554905"}}
+	jsonImageSets := []JSONImageSet{JSONImageSet{UUID: "512c1f3d-e48c-4618-863c-94bc9d913b9b"}, JSONImageSet{UUID: "43dc1ff3-6d6c-41f3-9196-56dcaa554905"}}
 	mockedImageSetMapper.On("Map", mock.MatchedBy(func(source NativeContent) bool { return true })).Return(jsonImageSets, nil)
 	mockedProducer := new(mockProducer)
 	mockedProducer.On("SendMessage", "", mock.MatchedBy(func(msg producer.Message) bool { return true })).Return(nil)
@@ -76,8 +76,8 @@ func TestOnMessage_OkWhenNoTimestamp(t *testing.T) {
 
 func TestOnMessage_SkipsWhenNotOriginSystem(t *testing.T) {
 	sourceMsg := consumer.Message{
-		Headers: map[string]string {
-			"X-Request-Id": "tid_test123",
+		Headers: map[string]string{
+			"X-Request-Id":     "tid_test123",
 			"Origin-System-Id": "some other origin system",
 		},
 	}
@@ -88,7 +88,7 @@ func TestOnMessage_SkipsWhenNotOriginSystem(t *testing.T) {
 }
 
 func TestOnMessage_SkipsWhenNotRequestId(t *testing.T) {
-	sourceMsg := consumer.Message{ Headers: map[string]string {} }
+	sourceMsg := consumer.Message{Headers: map[string]string{}}
 	mockedProducer := new(mockProducer)
 	q := newQueue(nil, mockedProducer, nil, nil)
 	q.onMessage(sourceMsg)
@@ -97,9 +97,9 @@ func TestOnMessage_SkipsWhenNotRequestId(t *testing.T) {
 
 func TestOnMessage_WarnIfErrorMappingNative(t *testing.T) {
 	sourceMsg := consumer.Message{
-		Headers: map[string]string {
-			"X-Request-Id": "tid_test123",
-			"Origin-System-Id": methodeSystemOrigin,
+		Headers: map[string]string{
+			"X-Request-Id":      "tid_test123",
+			"Origin-System-Id":  methodeSystemOrigin,
 			"Message-Timestamp": "2017-05-15T15:54:32.166Z",
 		},
 	}
@@ -113,14 +113,14 @@ func TestOnMessage_WarnIfErrorMappingNative(t *testing.T) {
 
 func TestOnMessage_SkipOtherTypes(t *testing.T) {
 	sourceMsg := consumer.Message{
-		Headers: map[string]string {
-			"X-Request-Id": "tid_test123",
-			"Origin-System-Id": methodeSystemOrigin,
+		Headers: map[string]string{
+			"X-Request-Id":      "tid_test123",
+			"Origin-System-Id":  methodeSystemOrigin,
 			"Message-Timestamp": "2017-05-15T15:54:32.166Z",
 		},
 	}
 	nativeContent := NativeContent{
-		Type: "other type",
+		Type:  "other type",
 		Value: "",
 	}
 	mockedMessageToNativeMapper := new(mockMessageToNativeMapper)
@@ -134,14 +134,14 @@ func TestOnMessage_SkipOtherTypes(t *testing.T) {
 
 func TestOnMessage_WarnIfErrorInImageSetMapper(t *testing.T) {
 	sourceMsg := consumer.Message{
-		Headers: map[string]string {
-			"X-Request-Id": "tid_test123",
-			"Origin-System-Id": methodeSystemOrigin,
+		Headers: map[string]string{
+			"X-Request-Id":      "tid_test123",
+			"Origin-System-Id":  methodeSystemOrigin,
 			"Message-Timestamp": "2017-05-15T15:54:32.166Z",
 		},
 	}
 	nativeContent := NativeContent{
-		Type: compoundStory,
+		Type:  compoundStory,
 		Value: "",
 	}
 	mockedMessageToNativeMapper := new(mockMessageToNativeMapper)
@@ -157,24 +157,28 @@ func TestOnMessage_WarnIfErrorInImageSetMapper(t *testing.T) {
 
 func TestOnMessage_OneSendFailureShouldNotAffectOther(t *testing.T) {
 	sourceMsg := consumer.Message{
-		Headers: map[string]string {
-			"X-Request-Id": "tid_test123",
-			"Origin-System-Id": methodeSystemOrigin,
+		Headers: map[string]string{
+			"X-Request-Id":      "tid_test123",
+			"Origin-System-Id":  methodeSystemOrigin,
 			"Message-Timestamp": "2017-05-15T15:54:32.166Z",
 		},
 	}
 	nativeContent := NativeContent{
-		Type: compoundStory,
+		Type:  compoundStory,
 		Value: "",
 	}
 	mockedMessageToNativeMapper := new(mockMessageToNativeMapper)
 	mockedMessageToNativeMapper.On("Map", mock.MatchedBy(func(source []byte) bool { return true })).Return(nativeContent, nil)
 	mockedImageSetMapper := new(mockImageSetMapper)
-	jsonImageSets := []JSONImageSet{JSONImageSet{UUID: "512c1f3d-e48c-4618-863c-94bc9d913b9b"}, JSONImageSet{ UUID: "43dc1ff3-6d6c-41f3-9196-56dcaa554905"}}
+	jsonImageSets := []JSONImageSet{JSONImageSet{UUID: "512c1f3d-e48c-4618-863c-94bc9d913b9b"}, JSONImageSet{UUID: "43dc1ff3-6d6c-41f3-9196-56dcaa554905"}}
 	mockedImageSetMapper.On("Map", mock.MatchedBy(func(source NativeContent) bool { return true })).Return(jsonImageSets, nil)
 	mockedProducer := new(mockProducer)
-	mockedProducer.On("SendMessage", "", mock.MatchedBy(func(msg producer.Message) bool { return strings.Contains(msg.Body, "512c1f3d-e48c-4618-863c-94bc9d913b9b") })).Return(errors.New("error sending first msg"))
-	mockedProducer.On("SendMessage", "", mock.MatchedBy(func(msg producer.Message) bool { return strings.Contains(msg.Body, "43dc1ff3-6d6c-41f3-9196-56dcaa554905") })).Return(nil)
+	mockedProducer.On("SendMessage", "", mock.MatchedBy(func(msg producer.Message) bool {
+		return strings.Contains(msg.Body, "512c1f3d-e48c-4618-863c-94bc9d913b9b")
+	})).Return(errors.New("error sending first msg"))
+	mockedProducer.On("SendMessage", "", mock.MatchedBy(func(msg producer.Message) bool {
+		return strings.Contains(msg.Body, "43dc1ff3-6d6c-41f3-9196-56dcaa554905")
+	})).Return(nil)
 	q := newQueue(nil, mockedProducer, mockedMessageToNativeMapper, mockedImageSetMapper)
 	q.onMessage(sourceMsg)
 	mockedProducer.AssertCalled(t, "SendMessage", "",
@@ -194,19 +198,19 @@ func TestBuildMessage_Ok(t *testing.T) {
 	actualMsg, err := q.buildMessage(JSONImageSet{
 		UUID: "5a8f3f37-3098-48f7-811a-f69d12f2b1be",
 		Members: []JSONMember{
-			JSONMember{ UUID: "8ff1c7f4-a80b-4b8d-8821-b07ff1bfdf87"},
-			JSONMember{ UUID: "3bea853a-89b8-4831-80b3-8384e962f5dc"},
-			JSONMember{ UUID: "c6eeea75-748e-4b1c-a046-6e4c9d81ff25"},
+			JSONMember{UUID: "8ff1c7f4-a80b-4b8d-8821-b07ff1bfdf87"},
+			JSONMember{UUID: "3bea853a-89b8-4831-80b3-8384e962f5dc"},
+			JSONMember{UUID: "c6eeea75-748e-4b1c-a046-6e4c9d81ff25"},
 		},
 		Identifiers: []JSONIdentifier{
 			JSONIdentifier{
-				Authority: methodeAuthority,
+				Authority:       methodeAuthority,
 				IdentifierValue: "5a8f3f37-3098-48f7-811a-f69d12f2b1be",
 			},
 		},
-		PublishedDate: "2017-05-18T02:24:25Z",
+		PublishedDate:      "2017-05-18T02:24:25Z",
 		FirstPublishedDate: "2017-05-18T02:24:00Z",
-		CanBeDistributed: "verify",
+		CanBeDistributed:   "verify",
 	}, "2017-05-15T15:54:32.166Z", "tid_test")
 	assert.NoError(t, err, "Error wasn't expected during buildMessage()")
 	assert.Equal(t, actualMsg.Headers["X-Request-Id"], "tid_test")
@@ -229,13 +233,13 @@ func TestBuildMessages_Ok(t *testing.T) {
 			},
 			Identifiers: []JSONIdentifier{
 				JSONIdentifier{
-					Authority: methodeAuthority,
+					Authority:       methodeAuthority,
 					IdentifierValue: "5a8f3f37-3098-48f7-811a-f69d12f2b1be",
 				},
 			},
-			PublishedDate: "2017-05-18T02:24:25Z",
+			PublishedDate:      "2017-05-18T02:24:25Z",
 			FirstPublishedDate: "2017-05-18T02:24:00Z",
-			CanBeDistributed: "verify",
+			CanBeDistributed:   "verify",
 		},
 		JSONImageSet{
 			UUID: "270c0151-7742-4c1e-b77e-a5557881a042",
@@ -246,13 +250,13 @@ func TestBuildMessages_Ok(t *testing.T) {
 			},
 			Identifiers: []JSONIdentifier{
 				JSONIdentifier{
-					Authority: methodeAuthority,
+					Authority:       methodeAuthority,
 					IdentifierValue: "270c0151-7742-4c1e-b77e-a5557881a042",
 				},
 			},
-			PublishedDate: "2017-05-18T02:24:25Z",
+			PublishedDate:      "2017-05-18T02:24:25Z",
 			FirstPublishedDate: "2017-05-18T02:24:00Z",
-			CanBeDistributed: "verify",
+			CanBeDistributed:   "verify",
 		},
 	}, "2017-05-15T15:54:32.166Z", "tid_test")
 	if len(errs) != 0 {

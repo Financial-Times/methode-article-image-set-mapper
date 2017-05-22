@@ -1,8 +1,8 @@
 package main
 
 import (
-	"testing"
 	"github.com/stretchr/testify/assert"
+	"testing"
 )
 
 func TestXMLJSONMap_Ok(t *testing.T) {
@@ -33,10 +33,10 @@ func TestXMLJSONMap_Ok(t *testing.T) {
 			},
 		},
 	}
-	xmlAttributes := xmlAttributes {
-		OutputChannels: OutputChannels {
-			DIFTcom {
-				DIFTcomLastPublication: "20170518022425",
+	xmlAttributes := xmlAttributes{
+		OutputChannels: OutputChannels{
+			DIFTcom{
+				DIFTcomLastPublication:    "20170518022425",
 				DIFTcomInitialPublication: "20170518022400",
 			},
 		},
@@ -49,8 +49,8 @@ func TestXMLJSONMap_Ok(t *testing.T) {
 		JSONImageSet{
 			UUID: "1376ed33-0d81-3f62-ad62-a9b87b473556",
 			Identifiers: []JSONIdentifier{
-				JSONIdentifier {
-					Authority: "http://api.ft.com/system/FTCOM-METHODE",
+				JSONIdentifier{
+					Authority:       "http://api.ft.com/system/FTCOM-METHODE",
 					IdentifierValue: "1376ed33-0d81-3f62-ad62-a9b87b473556",
 				},
 			},
@@ -65,17 +65,17 @@ func TestXMLJSONMap_Ok(t *testing.T) {
 					UUID: "3ff3b7a8-13c5-11e7-9469-afea892e4de3",
 				},
 			},
-			PublishReference: "tid_test",
-			LastModified: "2017-05-17T13:46:01.100Z",
-			PublishedDate: "2017-05-18T02:24:25.000Z",
+			PublishReference:   "tid_test",
+			LastModified:       "2017-05-17T13:46:01.100Z",
+			PublishedDate:      "2017-05-18T02:24:25.000Z",
 			FirstPublishedDate: "2017-05-18T02:24:00.000Z",
-			CanBeDistributed: "verify",
+			CanBeDistributed:   "verify",
 		},
 		JSONImageSet{
 			UUID: "89e79a93-1bcc-39d6-bcc4-e77b82d3712f",
 			Identifiers: []JSONIdentifier{
-				JSONIdentifier {
-					Authority: "http://api.ft.com/system/FTCOM-METHODE",
+				JSONIdentifier{
+					Authority:       "http://api.ft.com/system/FTCOM-METHODE",
 					IdentifierValue: "89e79a93-1bcc-39d6-bcc4-e77b82d3712f",
 				},
 			},
@@ -90,11 +90,11 @@ func TestXMLJSONMap_Ok(t *testing.T) {
 					UUID: "2acf1caa-8014-48ec-b070-a0ffbc45d1d5",
 				},
 			},
-			PublishReference: "tid_test",
-			LastModified: "2017-05-17T13:46:01.100Z",
-			PublishedDate: "2017-05-18T02:24:25.000Z",
+			PublishReference:   "tid_test",
+			LastModified:       "2017-05-17T13:46:01.100Z",
+			PublishedDate:      "2017-05-18T02:24:25.000Z",
 			FirstPublishedDate: "2017-05-18T02:24:00.000Z",
-			CanBeDistributed: "verify",
+			CanBeDistributed:   "verify",
 		},
 	}
 	assert.Equal(t, expectedImageSets, actualImageSets)

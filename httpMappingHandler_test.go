@@ -1,14 +1,14 @@
 package main
 
 import (
+	"bytes"
+	"errors"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 	"net/http"
 	"net/http/httptest"
-	"github.com/stretchr/testify/mock"
-	"bytes"
-	"testing"
-	"github.com/stretchr/testify/assert"
 	"strings"
-	"errors"
+	"testing"
 )
 
 func TestHttpHandler_Ok(t *testing.T) {

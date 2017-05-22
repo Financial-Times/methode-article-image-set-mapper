@@ -3,10 +3,10 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	trans "github.com/Financial-Times/transactionid-utils-go"
 	"github.com/Sirupsen/logrus"
 	"io/ioutil"
 	"net/http"
-	trans "github.com/Financial-Times/transactionid-utils-go"
 	"time"
 )
 

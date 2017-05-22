@@ -1,24 +1,24 @@
 package main
 
 import (
-	health "github.com/Financial-Times/go-fthealth/v1_1"
-	"github.com/Financial-Times/service-status-go/gtg"
 	"encoding/json"
-	"fmt"
 	"errors"
-	"github.com/Sirupsen/logrus"
-	"net/http"
-	"io/ioutil"
+	"fmt"
+	health "github.com/Financial-Times/go-fthealth/v1_1"
 	"github.com/Financial-Times/message-queue-gonsumer/consumer"
+	"github.com/Financial-Times/service-status-go/gtg"
+	"github.com/Sirupsen/logrus"
+	"io/ioutil"
+	"net/http"
 )
 
 const healthPath = "/__health"
 
 type healthService struct {
-	httpClient *http.Client
+	httpClient     *http.Client
 	consumerConfig consumer.QueueConfig
-	config *healthConfig
-	checks []health.Check
+	config         *healthConfig
+	checks         []health.Check
 }
 
 type healthConfig struct {
@@ -28,8 +28,8 @@ type healthConfig struct {
 
 func newHealthService(config *healthConfig, httpClient *http.Client, consumerConfig consumer.QueueConfig) *healthService {
 	service := &healthService{
-		config: config,
-		httpClient: httpClient,
+		config:         config,
+		httpClient:     httpClient,
 		consumerConfig: consumerConfig,
 	}
 	service.checks = []health.Check{

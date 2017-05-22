@@ -35,7 +35,7 @@ Options:
 
 ## Try:
 
-    curl -XPOST @sample-native-article.json http://localhost:8080/map
+    curl -XPOST -H"Content-Type:application/json;charset=utf-8" @sample-native-article.json http://localhost:8080/map
 
 ## Build and deployment
 
@@ -55,5 +55,6 @@ The expected response will be an image-set.
 * `/__gtg`
 * `/__health`
 * `/__build-info`
+* `/__ping`
 
 Healthchecks check that the app can read from a kafka topic and write to another.

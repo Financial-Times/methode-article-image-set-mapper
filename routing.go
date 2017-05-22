@@ -8,6 +8,7 @@ import (
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	"net/http"
+	"github.com/Financial-Times/service-status-go/httphandlers"
 )
 
 type routing struct {
@@ -40,6 +41,7 @@ func (r routing) routeAdminEndpoints(appSystemCode string, appName string) {
 	r.router.Path(healthPath).Handler(handlers.MethodHandler{"GET": http.HandlerFunc(health.Handler(hc))})
 	r.router.Path(status.GTGPath).Handler(handlers.MethodHandler{"GET": http.HandlerFunc(status.NewGoodToGoHandler(healthService.gtgCheck))})
 	r.router.Path(status.BuildInfoPath).Handler(handlers.MethodHandler{"GET": http.HandlerFunc(status.BuildInfoHandler)})
+	r.router.Path(httphandlers.PingPath).HandlerFunc(httphandlers.PingHandler)
 }
 
 func (r routing) listenAndServe(port string) {

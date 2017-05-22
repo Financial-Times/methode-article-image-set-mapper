@@ -3,13 +3,13 @@ package main
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"github.com/Financial-Times/message-queue-go-producer/producer"
 	"github.com/Financial-Times/message-queue-gonsumer/consumer"
 	"github.com/Sirupsen/logrus"
 	gouuid "github.com/satori/go.uuid"
 	"sync"
 	"time"
+	"fmt"
 )
 
 const (
@@ -38,6 +38,7 @@ func newQueue(messageConsumer consumer.MessageConsumer, messageProducer producer
 		messageProducer: messageProducer,
 		messageToNativeMapper: messageToNativeMapper,
 		imageSetMapper:        imageSetMapper,
+		consumerWaitGroup: sync.WaitGroup{},
 	}
 	return queue
 }
@@ -136,30 +137,15 @@ func (q defaultQueue) unsafeJSONMarshal(v interface{}) ([]byte, error) {
 	return b, nil
 }
 
-func prettyPrintConfig(consumerConfig consumer.QueueConfig, producerConfig producer.MessageProducerConfig) string {
-	return fmt.Sprintf("Config: [\n\t%s\n\t%s\n]", prettyPrintConsumerConfig(consumerConfig), prettyPrintProducerConfig(producerConfig))
-}
-
-func prettyPrintConsumerConfig(consumerConfig consumer.QueueConfig) string {
-	return fmt.Sprintf("consumerConfig: [\n\t\taddr: [%v]\n\t\tgroup: [%v]\n\t\ttopic: [%v]\n\t\treadQueueHeader: [%v]\n\t]",
-		consumerConfig.Addrs, consumerConfig.Group, consumerConfig.Topic, consumerConfig.Queue)
-}
-
-func prettyPrintProducerConfig(producerConfig producer.MessageProducerConfig) string {
-	return fmt.Sprintf("producerConfig: [\n\t\taddr: [%v]\n\t\ttopic: [%v]\n\t\twriteQueueHeader: [%v]\n\t]",
-		producerConfig.Addr, producerConfig.Topic, producerConfig.Queue)
-}
-
 func (q defaultQueue) startConsuming() {
-	var consumerWaitGroup sync.WaitGroup
-	consumerWaitGroup.Add(1)
+	q.consumerWaitGroup.Add(1)
 	go func() {
 		q.messageConsumer.Start()
-		consumerWaitGroup.Done()
+		q.consumerWaitGroup.Done()
 	}()
-	q.consumerWaitGroup = consumerWaitGroup
 }
 
-func (q defaultQueue) stop() {
+func (q defaultQueue) stop(consumerTeardown sync.WaitGroup) {
 	q.messageConsumer.Stop()
+	consumerTeardown.Add(1)
 }

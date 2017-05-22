@@ -12,12 +12,12 @@ import (
 	"net/http"
 	"net"
 	"time"
+	"fmt"
 )
 
 type app struct {
 	args             args
 	queue            defaultQueue
-	consumerTeardown sync.WaitGroup
 }
 
 func main() {
@@ -173,6 +173,22 @@ func (m app) waitForSignals() {
 }
 
 func (m app) teardown() {
-	m.queue.stop()
-	m.consumerTeardown.Wait()
+	var consumerTeardown sync.WaitGroup
+	m.queue.stop(consumerTeardown)
+	consumerTeardown.Wait()
+	logrus.Infof("Doneee$$$")
+}
+
+func prettyPrintConfig(consumerConfig consumer.QueueConfig, producerConfig producer.MessageProducerConfig) string {
+	return fmt.Sprintf("Config: [\n\t%s\n\t%s\n]", prettyPrintConsumerConfig(consumerConfig), prettyPrintProducerConfig(producerConfig))
+}
+
+func prettyPrintConsumerConfig(consumerConfig consumer.QueueConfig) string {
+	return fmt.Sprintf("consumerConfig: [\n\t\taddr: [%v]\n\t\tgroup: [%v]\n\t\ttopic: [%v]\n\t\treadQueueHeader: [%v]\n\t]",
+		consumerConfig.Addrs, consumerConfig.Group, consumerConfig.Topic, consumerConfig.Queue)
+}
+
+func prettyPrintProducerConfig(producerConfig producer.MessageProducerConfig) string {
+	return fmt.Sprintf("producerConfig: [\n\t\taddr: [%v]\n\t\ttopic: [%v]\n\t\twriteQueueHeader: [%v]\n\t]",
+		producerConfig.Addr, producerConfig.Topic, producerConfig.Queue)
 }

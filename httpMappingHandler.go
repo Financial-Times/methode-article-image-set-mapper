@@ -38,7 +38,7 @@ func (h defaultHTTPMappingHandler) handle(w http.ResponseWriter, r *http.Request
 	tid := trans.GetTransactionIDFromRequest(r)
 
 	body, err := ioutil.ReadAll(r.Body)
-	defer h.closeResponseBody(r)
+	defer h.closeRequestBody(r)
 	if err != nil {
 		h.warnAndWriteToHTTP500(fmt.Sprintf("Cound't read from request body. %v\n", err), w)
 		return
@@ -88,7 +88,7 @@ func (h defaultHTTPMappingHandler) writeToHTTP500(msg string, w http.ResponseWri
 	}
 }
 
-func (h defaultHTTPMappingHandler) closeResponseBody(r *http.Request) {
+func (h defaultHTTPMappingHandler) closeRequestBody(r *http.Request) {
 	err := r.Body.Close()
 	if err != nil {
 		logrus.Warnf("Coulnd't close request body. %v\n", err)

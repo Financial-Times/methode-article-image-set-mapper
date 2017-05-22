@@ -35,7 +35,16 @@ Options:
 
 ## Try:
 
-    curl -XPOST -H"Content-Type:application/json;charset=utf-8" @sample-native-article.json http://localhost:8080/map
+    ssh -L 8083:localhost:8080 core@rj-tunnel-up.ft.com
+
+    export Q_ADDR="http://localhost:8083"
+    export Q_GROUP="methode-article-image-set-mapper-local"
+    export Q_READ_TOPIC=NativeCmsPublicationEvents
+    export Q_READ_QUEUE=kafka
+    export Q_WRITE_TOPIC=CmsPublicationEvents
+    export Q_WRITE_QUEUE=kafka
+
+    curl -XPOST -H"Content-Type:application/json;charset=utf-8" -H"X-Request-Id:tid_test" -d @sample-methode-native-article-c17e8abe-1df8-11e7-942c-4a4c42b3072e.json http://localhost:8080/map
 
 ## Build and deployment
 
@@ -44,9 +53,75 @@ Options:
 
 ## Service endpoints
 
+### /map
+
 ### POST
 
-    curl -XPOST @sample-native-article.json http://localhost:8080/map
+Request:
+
+    curl -XPOST -H"Content-Type:application/json;charset=utf-8" -H"X-Request-Id:tid_test" -d @sample-methode-native-article-c17e8abe-1df8-11e7-942c-4a4c42b3072e.json http://localhost:8080/map
+
+Response:
+
+```
+HTTP/1.1 200 OK
+Content-Type: application/json;charset=utf-8
+Date: Mon, 22 May 2017 15:34:15 GMT
+Content-Length: 1055
+
+[
+  {
+    "uuid": "4ec94836-0d00-325d-9005-c9aa67f68963",
+    "identifiers": [
+      {
+        "authority": "http://api.ft.com/system/FTCOM-METHODE",
+        "identifierValue": "4ec94836-0d00-325d-9005-c9aa67f68963"
+      }
+    ],
+    "members": [
+      {
+        "uuid": "41614f4c-13c5-11e7-9469-afea892e4de3"
+      },
+      {
+        "uuid": "4258f26a-13c5-11e7-9469-afea892e4de3"
+      },
+      {
+        "uuid": "3ff3b7a8-13c5-11e7-9469-afea892e4de3"
+      }
+    ],
+    "publishReference": "tid_test",
+    "lastModified": "2017-05-22T02:59:39.195Z",
+    "publishedDate": "2017-04-10T03:29:14.000Z",
+    "firstPublishedDate": "2017-04-10T03:29:14.000Z",
+    "canBeDistributed": "verify"
+  },
+  {
+    "uuid": "8c07916c-2577-37b6-b477-291094f992ee",
+    "identifiers": [
+      {
+        "authority": "http://api.ft.com/system/FTCOM-METHODE",
+        "identifierValue": "8c07916c-2577-37b6-b477-291094f992ee"
+      }
+    ],
+    "members": [
+      {
+        "uuid": "41614f4c-13c5-11e7-9469-afea892e4de3"
+      },
+      {
+        "uuid": "4258f26a-13c5-11e7-9469-afea892e4de3"
+      },
+      {
+        "uuid": "3ff3b7a8-13c5-11e7-9469-afea892e4de3"
+      }
+    ],
+    "publishReference": "tid_test",
+    "lastModified": "2017-05-22T02:59:39.195Z",
+    "publishedDate": "2017-04-10T03:29:14.000Z",
+    "firstPublishedDate": "2017-04-10T03:29:14.000Z",
+    "canBeDistributed": "verify"
+  }
+]
+```
 
 The expected response will be an image-set.
 

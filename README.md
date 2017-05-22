@@ -59,9 +59,13 @@ Options:
 
 Request:
 
+The input should be a methode article in native format, as it comes from methode directly or similar to what is stored in the native-store.
+
     curl -XPOST -H"Content-Type:application/json;charset=utf-8" -H"X-Request-Id:tid_test" -d @sample-methode-native-article-c17e8abe-1df8-11e7-942c-4a4c42b3072e.json http://localhost:8080/map
 
 Response:
+
+The expected response will be an array of image-sets.
 
 ```
 HTTP/1.1 200 OK
@@ -122,8 +126,6 @@ Content-Length: 1055
   }
 ]
 ```
-
-The expected response will be an image-set.
 
 ## Admin endpoints:
 

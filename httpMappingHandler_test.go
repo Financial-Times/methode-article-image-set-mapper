@@ -9,6 +9,7 @@ import (
 	"net/http/httptest"
 	"strings"
 	"testing"
+	trans "github.com/Financial-Times/transactionid-utils-go"
 )
 
 func TestHttpHandler_Ok(t *testing.T) {
@@ -25,6 +26,8 @@ func TestHttpHandler_Ok(t *testing.T) {
 	handler := http.HandlerFunc(httpHandler.handle)
 	handler.ServeHTTP(recorder, request)
 	assert.Equal(t, http.StatusOK, recorder.Code)
+	_, ok := recorder.HeaderMap[trans.TransactionIDHeader]
+	assert.True(t, ok, "Should contain transaction id in response headers.")
 	assert.Equal(t, []byte("[]"), recorder.Body.Bytes())
 }
 

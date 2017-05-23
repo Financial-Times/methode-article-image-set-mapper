@@ -37,6 +37,7 @@ func newHTTPMappingHandler(messageToNativeMapper MessageToNativeMapper, imageSet
 func (h defaultHTTPMappingHandler) handle(w http.ResponseWriter, r *http.Request) {
 	tid := trans.GetTransactionIDFromRequest(r)
 	w.Header().Add("Content-Type", "application/json;charset=utf-8")
+	w.Header().Add(trans.TransactionIDHeader, tid)
 
 	body, err := ioutil.ReadAll(r.Body)
 	defer h.closeRequestBody(r)

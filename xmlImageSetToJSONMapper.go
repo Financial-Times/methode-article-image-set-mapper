@@ -12,6 +12,7 @@ const (
 	verify            = "verify"
 	methodeDateFormat = "20060102150405"
 	uppDateFormat     = "2006-01-02T03:04:05.000Z0700"
+	imageSetType      = "ImageSet"
 )
 
 type XMLImageSetToJSONMapper interface {
@@ -51,6 +52,7 @@ func (m defaultImageSetToJSONMapper) Map(xmlImageSets []XMLImageSet, attributes 
 			CanBeDistributed:   verify,
 			LastModified:       lastModified,
 			PublishReference:   publishReference,
+			Type:               imageSetType,
 		}
 		jsonImageSets = append(jsonImageSets, jsonImageSet)
 	}

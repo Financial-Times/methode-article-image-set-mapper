@@ -9,6 +9,7 @@ type JSONImageSet struct {
 	PublishedDate      string           `json:"publishedDate"`
 	FirstPublishedDate string           `json:"firstPublishedDate"`
 	CanBeDistributed   string           `json:"canBeDistributed"`
+	Type               string           `json:"type"`
 }
 
 type JSONMember struct {

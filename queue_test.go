@@ -211,6 +211,7 @@ func TestBuildMessage_Ok(t *testing.T) {
 		PublishedDate:      "2017-05-18T02:24:25Z",
 		FirstPublishedDate: "2017-05-18T02:24:00Z",
 		CanBeDistributed:   "verify",
+		Type:               "ImageSet",
 	}, "2017-05-15T15:54:32.166Z", "tid_test")
 	assert.NoError(t, err, "Error wasn't expected during buildMessage()")
 	assert.Equal(t, actualMsg.Headers["X-Request-Id"], "tid_test")
@@ -218,7 +219,7 @@ func TestBuildMessage_Ok(t *testing.T) {
 	assert.Equal(t, actualMsg.Headers["Message-Type"], "cms-content-published")
 	assert.Equal(t, actualMsg.Headers["Content-Type"], "application/json")
 	assert.Equal(t, actualMsg.Headers["Origin-System-Id"], methodeSystemOrigin)
-	assert.Equal(t, actualMsg.Body, `{"contentUri":"http://methode-article-image-set-mapper.svc.ft.com/image-set/model/5a8f3f37-3098-48f7-811a-f69d12f2b1be","payload":{"uuid":"5a8f3f37-3098-48f7-811a-f69d12f2b1be","identifiers":[{"authority":"http://api.ft.com/system/FTCOM-METHODE","identifierValue":"5a8f3f37-3098-48f7-811a-f69d12f2b1be"}],"members":[{"uuid":"8ff1c7f4-a80b-4b8d-8821-b07ff1bfdf87"},{"uuid":"3bea853a-89b8-4831-80b3-8384e962f5dc"},{"uuid":"c6eeea75-748e-4b1c-a046-6e4c9d81ff25"}],"publishReference":"","lastModified":"","publishedDate":"2017-05-18T02:24:25Z","firstPublishedDate":"2017-05-18T02:24:00Z","canBeDistributed":"verify"},"lastModified":"2017-05-15T15:54:32.166Z"}`)
+	assert.Equal(t, actualMsg.Body, `{"contentUri":"http://methode-article-image-set-mapper.svc.ft.com/image-set/model/5a8f3f37-3098-48f7-811a-f69d12f2b1be","payload":{"uuid":"5a8f3f37-3098-48f7-811a-f69d12f2b1be","identifiers":[{"authority":"http://api.ft.com/system/FTCOM-METHODE","identifierValue":"5a8f3f37-3098-48f7-811a-f69d12f2b1be"}],"members":[{"uuid":"8ff1c7f4-a80b-4b8d-8821-b07ff1bfdf87"},{"uuid":"3bea853a-89b8-4831-80b3-8384e962f5dc"},{"uuid":"c6eeea75-748e-4b1c-a046-6e4c9d81ff25"}],"publishReference":"","lastModified":"","publishedDate":"2017-05-18T02:24:25Z","firstPublishedDate":"2017-05-18T02:24:00Z","canBeDistributed":"verify","type":"ImageSet"},"lastModified":"2017-05-15T15:54:32.166Z"}`)
 }
 
 func TestBuildMessages_Ok(t *testing.T) {
@@ -240,6 +241,7 @@ func TestBuildMessages_Ok(t *testing.T) {
 			PublishedDate:      "2017-05-18T02:24:25Z",
 			FirstPublishedDate: "2017-05-18T02:24:00Z",
 			CanBeDistributed:   "verify",
+			Type:               "ImageSet",
 		},
 		JSONImageSet{
 			UUID: "270c0151-7742-4c1e-b77e-a5557881a042",
@@ -257,6 +259,7 @@ func TestBuildMessages_Ok(t *testing.T) {
 			PublishedDate:      "2017-05-18T02:24:25Z",
 			FirstPublishedDate: "2017-05-18T02:24:00Z",
 			CanBeDistributed:   "verify",
+			Type:               "ImageSet",
 		},
 	}, "2017-05-15T15:54:32.166Z", "tid_test")
 	if len(errs) != 0 {
@@ -267,13 +270,13 @@ func TestBuildMessages_Ok(t *testing.T) {
 	assert.Equal(t, actualMsgs["5a8f3f37-3098-48f7-811a-f69d12f2b1be"].Headers["Message-Type"], "cms-content-published")
 	assert.Equal(t, actualMsgs["5a8f3f37-3098-48f7-811a-f69d12f2b1be"].Headers["Content-Type"], "application/json")
 	assert.Equal(t, actualMsgs["5a8f3f37-3098-48f7-811a-f69d12f2b1be"].Headers["Origin-System-Id"], methodeSystemOrigin)
-	assert.Equal(t, actualMsgs["5a8f3f37-3098-48f7-811a-f69d12f2b1be"].Body, `{"contentUri":"http://methode-article-image-set-mapper.svc.ft.com/image-set/model/5a8f3f37-3098-48f7-811a-f69d12f2b1be","payload":{"uuid":"5a8f3f37-3098-48f7-811a-f69d12f2b1be","identifiers":[{"authority":"http://api.ft.com/system/FTCOM-METHODE","identifierValue":"5a8f3f37-3098-48f7-811a-f69d12f2b1be"}],"members":[{"uuid":"8ff1c7f4-a80b-4b8d-8821-b07ff1bfdf87"},{"uuid":"3bea853a-89b8-4831-80b3-8384e962f5dc"},{"uuid":"c6eeea75-748e-4b1c-a046-6e4c9d81ff25"}],"publishReference":"","lastModified":"","publishedDate":"2017-05-18T02:24:25Z","firstPublishedDate":"2017-05-18T02:24:00Z","canBeDistributed":"verify"},"lastModified":"2017-05-15T15:54:32.166Z"}`)
+	assert.Equal(t, actualMsgs["5a8f3f37-3098-48f7-811a-f69d12f2b1be"].Body, `{"contentUri":"http://methode-article-image-set-mapper.svc.ft.com/image-set/model/5a8f3f37-3098-48f7-811a-f69d12f2b1be","payload":{"uuid":"5a8f3f37-3098-48f7-811a-f69d12f2b1be","identifiers":[{"authority":"http://api.ft.com/system/FTCOM-METHODE","identifierValue":"5a8f3f37-3098-48f7-811a-f69d12f2b1be"}],"members":[{"uuid":"8ff1c7f4-a80b-4b8d-8821-b07ff1bfdf87"},{"uuid":"3bea853a-89b8-4831-80b3-8384e962f5dc"},{"uuid":"c6eeea75-748e-4b1c-a046-6e4c9d81ff25"}],"publishReference":"","lastModified":"","publishedDate":"2017-05-18T02:24:25Z","firstPublishedDate":"2017-05-18T02:24:00Z","canBeDistributed":"verify","type":"ImageSet"},"lastModified":"2017-05-15T15:54:32.166Z"}`)
 
 	assert.Equal(t, actualMsgs["270c0151-7742-4c1e-b77e-a5557881a042"].Headers["X-Request-Id"], "tid_test")
 	assert.NotEmpty(t, actualMsgs["270c0151-7742-4c1e-b77e-a5557881a042"].Headers["Message-Id"])
 	assert.Equal(t, actualMsgs["270c0151-7742-4c1e-b77e-a5557881a042"].Headers["Message-Type"], "cms-content-published")
 	assert.Equal(t, actualMsgs["270c0151-7742-4c1e-b77e-a5557881a042"].Headers["Content-Type"], "application/json")
 	assert.Equal(t, actualMsgs["270c0151-7742-4c1e-b77e-a5557881a042"].Headers["Origin-System-Id"], methodeSystemOrigin)
-	assert.Equal(t, actualMsgs["270c0151-7742-4c1e-b77e-a5557881a042"].Body, `{"contentUri":"http://methode-article-image-set-mapper.svc.ft.com/image-set/model/270c0151-7742-4c1e-b77e-a5557881a042","payload":{"uuid":"270c0151-7742-4c1e-b77e-a5557881a042","identifiers":[{"authority":"http://api.ft.com/system/FTCOM-METHODE","identifierValue":"270c0151-7742-4c1e-b77e-a5557881a042"}],"members":[{"uuid":"667ee7f3-4f58-4080-a6f9-9b16b633dea8"},{"uuid":"a0513a50-08d1-43f6-af2b-7e7dc4d40b31"},{"uuid":"47e5a693-cd39-4ede-a016-244e6413a7fa"}],"publishReference":"","lastModified":"","publishedDate":"2017-05-18T02:24:25Z","firstPublishedDate":"2017-05-18T02:24:00Z","canBeDistributed":"verify"},"lastModified":"2017-05-15T15:54:32.166Z"}`)
+	assert.Equal(t, actualMsgs["270c0151-7742-4c1e-b77e-a5557881a042"].Body, `{"contentUri":"http://methode-article-image-set-mapper.svc.ft.com/image-set/model/270c0151-7742-4c1e-b77e-a5557881a042","payload":{"uuid":"270c0151-7742-4c1e-b77e-a5557881a042","identifiers":[{"authority":"http://api.ft.com/system/FTCOM-METHODE","identifierValue":"270c0151-7742-4c1e-b77e-a5557881a042"}],"members":[{"uuid":"667ee7f3-4f58-4080-a6f9-9b16b633dea8"},{"uuid":"a0513a50-08d1-43f6-af2b-7e7dc4d40b31"},{"uuid":"47e5a693-cd39-4ede-a016-244e6413a7fa"}],"publishReference":"","lastModified":"","publishedDate":"2017-05-18T02:24:25Z","firstPublishedDate":"2017-05-18T02:24:00Z","canBeDistributed":"verify","type":"ImageSet"},"lastModified":"2017-05-15T15:54:32.166Z"}`)
 
 }

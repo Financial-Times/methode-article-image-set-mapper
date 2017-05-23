@@ -70,6 +70,7 @@ func TestXMLJSONMap_Ok(t *testing.T) {
 			PublishedDate:      "2017-05-18T02:24:25.000Z",
 			FirstPublishedDate: "2017-05-18T02:24:00.000Z",
 			CanBeDistributed:   "verify",
+			Type:               "ImageSet",
 		},
 		JSONImageSet{
 			UUID: "89e79a93-1bcc-39d6-bcc4-e77b82d3712f",
@@ -95,6 +96,7 @@ func TestXMLJSONMap_Ok(t *testing.T) {
 			PublishedDate:      "2017-05-18T02:24:25.000Z",
 			FirstPublishedDate: "2017-05-18T02:24:00.000Z",
 			CanBeDistributed:   "verify",
+			Type:               "ImageSet",
 		},
 	}
 	assert.Equal(t, expectedImageSets, actualImageSets)

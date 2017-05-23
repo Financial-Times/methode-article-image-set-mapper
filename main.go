@@ -174,9 +174,9 @@ func (m app) waitForSignals() {
 
 func (m app) teardown() {
 	var consumerTeardown sync.WaitGroup
-	m.queue.stop(consumerTeardown)
+	consumerTeardown.Add(1)
+	m.queue.stop(&consumerTeardown)
 	consumerTeardown.Wait()
-	logrus.Infof("Doneee$$$")
 }
 
 func prettyPrintConfig(consumerConfig consumer.QueueConfig, producerConfig producer.MessageProducerConfig) string {

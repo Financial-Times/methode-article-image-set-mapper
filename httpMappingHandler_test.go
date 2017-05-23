@@ -42,7 +42,7 @@ func TestHttpHandler_ErrorOnNativeMapper(t *testing.T) {
 	recorder := httptest.NewRecorder()
 	handler := http.HandlerFunc(httpHandler.handle)
 	handler.ServeHTTP(recorder, request)
-	assert.Equal(t, http.StatusInternalServerError, recorder.Code)
+	assert.Equal(t, http.StatusUnprocessableEntity, recorder.Code)
 	assert.True(t, strings.Contains(string(recorder.Body.Bytes()), `{"message":"Error mapping native message.`))
 }
 
@@ -59,6 +59,6 @@ func TestHttpHandler_ErrorOnImageSetMapper(t *testing.T) {
 	recorder := httptest.NewRecorder()
 	handler := http.HandlerFunc(httpHandler.handle)
 	handler.ServeHTTP(recorder, request)
-	assert.Equal(t, http.StatusInternalServerError, recorder.Code)
+	assert.Equal(t, http.StatusUnprocessableEntity, recorder.Code)
 	assert.True(t, strings.Contains(string(recorder.Body.Bytes()), `{"message":"Error mapping the given content.`))
 }

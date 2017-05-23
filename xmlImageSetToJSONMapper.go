@@ -32,11 +32,11 @@ func (m defaultImageSetToJSONMapper) Map(xmlImageSets []XMLImageSet, attributes 
 		uuid := uuidutils.NewV3UUID(xmlImageSet.ID)
 		publishedDate, err := time.Parse(methodeDateFormat, attributes.OutputChannels.DIFTcom.DIFTcomLastPublication)
 		if err != nil {
-			return nil, fmt.Errorf("Couldn't parse native published date %v %v", attributes.OutputChannels.DIFTcom.DIFTcomLastPublication, err)
+			return nil, fmt.Errorf("Couldn't parse required methode field published date (DIFTcomLastPublication) %v %v", attributes.OutputChannels.DIFTcom.DIFTcomLastPublication, err)
 		}
 		firstPublishedDate, err := time.Parse(methodeDateFormat, attributes.OutputChannels.DIFTcom.DIFTcomInitialPublication)
 		if err != nil {
-			return nil, fmt.Errorf("Couldn't parse native initial published date %v %v", attributes.OutputChannels.DIFTcom.DIFTcomInitialPublication, err)
+			return nil, fmt.Errorf("Couldn't parse required methode field initial published date (DIFTcomInitialPublication) %v %v", attributes.OutputChannels.DIFTcom.DIFTcomInitialPublication, err)
 		}
 		jsonImageSet := JSONImageSet{
 			UUID:    uuid.String(),

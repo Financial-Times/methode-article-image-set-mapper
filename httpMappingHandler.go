@@ -48,13 +48,13 @@ func (h defaultHTTPMappingHandler) handle(w http.ResponseWriter, r *http.Request
 
 	native, err := h.messageToNativeMapper.Map(body)
 	if err != nil {
-		h.writeToHTTP500(fmt.Sprintf("Error mapping native message. %v\n", err), w)
+		h.writeToHTTP(fmt.Sprintf("Error mapping native message. %v\n", err), http.StatusUnprocessableEntity, w)
 		return
 	}
 
 	imageSets, err := h.imageSetMapper.Map(native, time.Now().Format(uppDateFormat), tid)
 	if err != nil {
-		h.writeToHTTP500(fmt.Sprintf("Error mapping the given content. %v\n", err), w)
+		h.writeToHTTP(fmt.Sprintf("Error mapping the given content. %v\n", err), http.StatusUnprocessableEntity, w)
 		return
 	}
 
@@ -72,16 +72,16 @@ func (h defaultHTTPMappingHandler) handle(w http.ResponseWriter, r *http.Request
 
 func (h defaultHTTPMappingHandler) warnAndWriteToHTTP500(msg string, w http.ResponseWriter) {
 	logrus.Warn(msg)
-	h.writeToHTTP500(msg, w)
+	h.writeToHTTP(msg, http.StatusInternalServerError, w)
 }
 
-func (h defaultHTTPMappingHandler) writeToHTTP500(msg string, w http.ResponseWriter) {
+func (h defaultHTTPMappingHandler) writeToHTTP(msg string, status int, w http.ResponseWriter) {
 	httpMsg, marshalErr := json.Marshal(newHTTPErrorMessage(msg))
 	if marshalErr != nil {
-		w.WriteHeader(http.StatusInternalServerError)
+		w.WriteHeader(status)
 		return
 	}
-	w.WriteHeader(http.StatusInternalServerError)
+	w.WriteHeader(status)
 	_, err := w.Write(httpMsg)
 	if err != nil {
 		logrus.Warn("Couldn't write to response. %v\n", err)

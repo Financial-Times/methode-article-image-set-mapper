@@ -145,7 +145,7 @@ func (q defaultQueue) startConsuming() {
 	}()
 }
 
-func (q defaultQueue) stop(consumerTeardown *sync.WaitGroup) {
+func (q defaultQueue) stop() {
 	q.messageConsumer.Stop()
-	consumerTeardown.Done()
+	q.consumerWaitGroup.Wait()
 }

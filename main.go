@@ -10,7 +10,6 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
-	"sync"
 	"syscall"
 	"time"
 )
@@ -69,7 +68,7 @@ func main() {
 		routing := newRouting(httpMappingHandler, &httpClient, consumerConfig, a.args.appSystemCode, a.args.appName)
 		go routing.listenAndServe(a.args.port)
 		a.waitForSignals()
-		a.teardown()
+		a.queue.stop()
 	}
 	err := cliApp.Run(os.Args)
 	if err != nil {
@@ -170,13 +169,6 @@ func (m app) waitForSignals() {
 	ch := make(chan os.Signal, 1)
 	signal.Notify(ch, syscall.SIGINT, syscall.SIGTERM)
 	<-ch
-}
-
-func (m app) teardown() {
-	var consumerTeardown sync.WaitGroup
-	consumerTeardown.Add(1)
-	m.queue.stop(&consumerTeardown)
-	consumerTeardown.Wait()
 }
 
 func prettyPrintConfig(consumerConfig consumer.QueueConfig, producerConfig producer.MessageProducerConfig) string {

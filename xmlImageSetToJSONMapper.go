@@ -5,6 +5,7 @@ import (
 	"github.com/Financial-Times/uuid-utils-go"
 	"strings"
 	"time"
+	"github.com/Sirupsen/logrus"
 )
 
 const (
@@ -24,11 +25,11 @@ type defaultImageSetToJSONMapper struct{}
 func (m defaultImageSetToJSONMapper) Map(xmlImageSets []XMLImageSet, attributes xmlAttributes, lastModified string, publishReference string) ([]JSONImageSet, error) {
 	jsonImageSets := make([]JSONImageSet, 0)
 	for _, xmlImageSet := range xmlImageSets {
-		members := []JSONMember{
-			m.mapMember(xmlImageSet.ImageMedium),
-			m.mapMember(xmlImageSet.ImageSmall),
-			m.mapMember(xmlImageSet.ImageLarge),
-		}
+		members := make([]JSONMember, 0, 3)
+		m.appendIfPresent(&members, xmlImageSet.ImageMedium, "medium")
+		m.appendIfPresent(&members, xmlImageSet.ImageSmall, "small")
+		m.appendIfPresent(&members, xmlImageSet.ImageLarge, "large")
+
 		uuid := uuidutils.NewV3UUID(xmlImageSet.ID)
 		publishedDate, err := time.Parse(methodeDateFormat, attributes.OutputChannels.DIFTcom.DIFTcomLastPublication)
 		if err != nil {
@@ -59,8 +60,26 @@ func (m defaultImageSetToJSONMapper) Map(xmlImageSets []XMLImageSet, attributes 
 	return jsonImageSets, nil
 }
 
-func (m defaultImageSetToJSONMapper) mapMember(xmlImage XMLImage) JSONMember {
-	return JSONMember{
+func (m defaultImageSetToJSONMapper) appendIfPresent(members *[]JSONMember, xmlImage XMLImage, memberName string) {
+	jsonMember := m.mapMember(xmlImage, memberName)
+	if jsonMember == nil {
+		logrus.Warn("", )
+	} else {
+		*members = append(*members, *jsonMember)
+	}
+}
+
+func (m defaultImageSetToJSONMapper) mapMember(xmlImage XMLImage, memberName string) *JSONMember {
+	if xmlImage.FileRef == "" {
+		logrus.Warnf("expected member %v is not present.", memberName)
+		return nil
+	}
+	refs := strings.Split(xmlImage.FileRef, "?uuid=")
+	if len(refs) != 2 {
+		logrus.Warnf("at member %v fileref attribute doesn't contain uuid fileref=%v", memberName, xmlImage.FileRef)
+		return nil
+	}
+	return &JSONMember{
 		UUID: strings.Split(xmlImage.FileRef, "?uuid=")[1],
 	}
 }

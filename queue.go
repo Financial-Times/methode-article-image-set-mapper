@@ -14,7 +14,7 @@ import (
 )
 
 const (
-	methodeSystemOrigin = "http://cmdb.ft.com/systems/methode-web-pub"
+	methodeSystemOrigin = "methode-web-pub"
 	dateFormat          = "2006-01-02T03:04:05.000Z0700"
 	contentURIBase      = "http://methode-article-image-set-mapper.svc.ft.com/image-set/model/"
 )
@@ -59,6 +59,7 @@ func (q defaultQueue) onMessage(m consumer.Message) {
 	lastModified := m.Headers["Message-Timestamp"]
 	if lastModified == "" {
 		lastModified = time.Now().Format(dateFormat)
+		logrus.Infof("Last modified date was empty on message, created now. transactionId=%v lastModifiedDate=%v", tid, lastModified)
 	}
 
 	native, err := q.messageToNativeMapper.Map([]byte(m.Body))

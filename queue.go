@@ -10,6 +10,7 @@ import (
 	gouuid "github.com/satori/go.uuid"
 	"sync"
 	"time"
+	trans "github.com/Financial-Times/transactionid-utils-go"
 )
 
 const (
@@ -44,10 +45,10 @@ func newQueue(messageConsumer consumer.MessageConsumer, messageProducer producer
 }
 
 func (q defaultQueue) onMessage(m consumer.Message) {
-	tid := m.Headers["X-Request-Id"]
+	tid := m.Headers[trans.TransactionIDHeader]
 	if tid == "" {
-		logrus.Warnf("X-Request-Id not found in kafka message headers. Skipping message")
-		return
+		tid = trans.NewTransactionID()
+		logrus.Warnf("X-Request-Id not found in kafka message headers. Created now. transactionId=%v", tid)
 	}
 
 	if m.Headers["Origin-System-Id"] != methodeSystemOrigin {
@@ -76,19 +77,23 @@ func (q defaultQueue) onMessage(m consumer.Message) {
 		return
 	}
 
-	msgs, errs := q.buildMessages(imageSets, lastModified, tid)
-	if len(errs) != 0 {
-		for uuid, err := range errs {
-			logrus.Errorf("Couldn't build message for image-set transactionId=%v uuid=%v %v", tid, uuid, err)
+	if len(imageSets) == 0 {
+		logrus.Infof("No image-sets were found in this article. transactionId=%v", tid)
+	} else {
+		msgs, errs := q.buildMessages(imageSets, lastModified, tid)
+		if len(errs) != 0 {
+			for uuid, err := range errs {
+				logrus.Errorf("Couldn't build message for image-set transactionId=%v uuid=%v %v", tid, uuid, err)
+			}
 		}
-	}
-	for uuid, msg := range msgs {
-		err = q.messageProducer.SendMessage("", msg)
-		if err != nil {
-			logrus.Errorf("Error sending transformed message to queue transactionId=%v uuid=%v %v", tid, uuid, err)
-			continue
+		for uuid, msg := range msgs {
+			err = q.messageProducer.SendMessage("", msg)
+			if err != nil {
+				logrus.Errorf("Error sending transformed message to queue transactionId=%v uuid=%v %v", tid, uuid, err)
+				continue
+			}
+			logrus.Infof("Mapped and sent for uuid=%v transactionId=%v", uuid, tid)
 		}
-		logrus.Infof("Mapped and sent for uuid=%v transactionId=%v", uuid, tid)
 	}
 }
 

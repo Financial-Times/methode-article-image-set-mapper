@@ -58,6 +58,9 @@ func (h defaultHTTPMappingHandler) handle(w http.ResponseWriter, r *http.Request
 		return
 	}
 
+	if len(imageSets) == 0 {
+		logrus.Infof("No image-sets were found in this article. transactionId=%v", tid)
+	}
 	marshaledJSONImageSets, err := json.Marshal(imageSets)
 	if err != nil {
 		h.warnAndWriteToHTTP500(fmt.Sprintf("Couldn't marshall built-up image-sets to JSON. %v\n", err), w)

@@ -6,11 +6,11 @@ import (
 	"fmt"
 	"github.com/Financial-Times/message-queue-go-producer/producer"
 	"github.com/Financial-Times/message-queue-gonsumer/consumer"
+	trans "github.com/Financial-Times/transactionid-utils-go"
 	"github.com/Sirupsen/logrus"
 	gouuid "github.com/satori/go.uuid"
 	"sync"
 	"time"
-	trans "github.com/Financial-Times/transactionid-utils-go"
 )
 
 const (

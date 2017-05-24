@@ -152,14 +152,14 @@ func TestXMLJSONMap_LessThan3(t *testing.T) {
 func TestAppendIfPresent_Present(t *testing.T) {
 	mapper := defaultImageSetToJSONMapper{}
 	members := make([]JSONMember, 0)
-	mapper.appendIfPresent(&members, XMLImage{ FileRef: "/FT/Graphics/Online/Z_Undefined/2017/03/timeline-artboards-s.png?uuid=4258f26a-13c5-11e7-9469-afea892e4de3"}, "any")
-	assert.Contains(t, members, JSONMember{ UUID: "4258f26a-13c5-11e7-9469-afea892e4de3"})
+	mapper.appendIfPresent(&members, XMLImage{FileRef: "/FT/Graphics/Online/Z_Undefined/2017/03/timeline-artboards-s.png?uuid=4258f26a-13c5-11e7-9469-afea892e4de3"}, "any")
+	assert.Contains(t, members, JSONMember{UUID: "4258f26a-13c5-11e7-9469-afea892e4de3"})
 }
 
 func TestAppendIfPresent_NoUuid(t *testing.T) {
 	mapper := defaultImageSetToJSONMapper{}
 	members := make([]JSONMember, 0)
-	mapper.appendIfPresent(&members, XMLImage{ FileRef: "/FT/Graphics/Online/Z_Undefined/2017/03/timeline-artboards-s.png"}, "any")
+	mapper.appendIfPresent(&members, XMLImage{FileRef: "/FT/Graphics/Online/Z_Undefined/2017/03/timeline-artboards-s.png"}, "any")
 	assert.Equal(t, len(members), 0)
 }
 

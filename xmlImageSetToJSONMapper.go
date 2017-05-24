@@ -3,9 +3,9 @@ package main
 import (
 	"fmt"
 	"github.com/Financial-Times/uuid-utils-go"
+	"github.com/Sirupsen/logrus"
 	"strings"
 	"time"
-	"github.com/Sirupsen/logrus"
 )
 
 const (
@@ -63,7 +63,7 @@ func (m defaultImageSetToJSONMapper) Map(xmlImageSets []XMLImageSet, attributes 
 func (m defaultImageSetToJSONMapper) appendIfPresent(members *[]JSONMember, xmlImage XMLImage, memberName string) {
 	jsonMember := m.mapMember(xmlImage, memberName)
 	if jsonMember == nil {
-		logrus.Warn("", )
+		logrus.Warn("")
 	} else {
 		*members = append(*members, *jsonMember)
 	}

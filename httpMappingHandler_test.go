@@ -3,13 +3,13 @@ package main
 import (
 	"bytes"
 	"errors"
+	trans "github.com/Financial-Times/transactionid-utils-go"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
-	trans "github.com/Financial-Times/transactionid-utils-go"
 )
 
 func TestHttpHandler_Ok(t *testing.T) {

@@ -14,7 +14,7 @@ import (
 )
 
 const (
-	methodeSystemOrigin = "methode-web-pub"
+	methodeSystemOrigin = "http://cmdb.ft.com/systems/methode-web-pub"
 	dateFormat          = "2006-01-02T03:04:05.000Z0700"
 	contentURIBase      = "http://methode-article-image-set-mapper.svc.ft.com/image-set/model/"
 )

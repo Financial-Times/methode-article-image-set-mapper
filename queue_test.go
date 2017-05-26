@@ -199,8 +199,14 @@ func TestBuildMessage_Ok(t *testing.T) {
 		UUID: "5a8f3f37-3098-48f7-811a-f69d12f2b1be",
 		Members: []JSONMember{
 			JSONMember{UUID: "8ff1c7f4-a80b-4b8d-8821-b07ff1bfdf87"},
-			JSONMember{UUID: "3bea853a-89b8-4831-80b3-8384e962f5dc"},
-			JSONMember{UUID: "c6eeea75-748e-4b1c-a046-6e4c9d81ff25"},
+			JSONMember{
+				UUID: "3bea853a-89b8-4831-80b3-8384e962f5dc",
+				MaxDisplayWidth: "490px",
+			},
+			JSONMember{
+				UUID: "c6eeea75-748e-4b1c-a046-6e4c9d81ff25",
+				MinDisplayWidth: "980px",
+			},
 		},
 		Identifiers: []JSONIdentifier{
 			JSONIdentifier{
@@ -219,7 +225,7 @@ func TestBuildMessage_Ok(t *testing.T) {
 	assert.Equal(t, actualMsg.Headers["Message-Type"], "cms-content-published")
 	assert.Equal(t, actualMsg.Headers["Content-Type"], "application/json")
 	assert.Equal(t, actualMsg.Headers["Origin-System-Id"], methodeSystemOrigin)
-	assert.Equal(t, actualMsg.Body, `{"contentUri":"http://methode-article-image-set-mapper.svc.ft.com/image-set/model/5a8f3f37-3098-48f7-811a-f69d12f2b1be","payload":{"uuid":"5a8f3f37-3098-48f7-811a-f69d12f2b1be","identifiers":[{"authority":"http://api.ft.com/system/FTCOM-METHODE","identifierValue":"5a8f3f37-3098-48f7-811a-f69d12f2b1be"}],"members":[{"uuid":"8ff1c7f4-a80b-4b8d-8821-b07ff1bfdf87"},{"uuid":"3bea853a-89b8-4831-80b3-8384e962f5dc"},{"uuid":"c6eeea75-748e-4b1c-a046-6e4c9d81ff25"}],"publishReference":"","lastModified":"","publishedDate":"2017-05-18T02:24:25Z","firstPublishedDate":"2017-05-18T02:24:00Z","canBeDistributed":"verify","type":"ImageSet"},"lastModified":"2017-05-15T15:54:32.166Z"}`)
+	assert.Equal(t, actualMsg.Body, `{"contentUri":"http://methode-article-image-set-mapper.svc.ft.com/image-set/model/5a8f3f37-3098-48f7-811a-f69d12f2b1be","payload":{"uuid":"5a8f3f37-3098-48f7-811a-f69d12f2b1be","identifiers":[{"authority":"http://api.ft.com/system/FTCOM-METHODE","identifierValue":"5a8f3f37-3098-48f7-811a-f69d12f2b1be"}],"members":[{"uuid":"8ff1c7f4-a80b-4b8d-8821-b07ff1bfdf87"},{"uuid":"3bea853a-89b8-4831-80b3-8384e962f5dc","maxDisplayWidth":"490px"},{"uuid":"c6eeea75-748e-4b1c-a046-6e4c9d81ff25","minDisplayWidth":"980px"}],"publishReference":"","lastModified":"","publishedDate":"2017-05-18T02:24:25Z","firstPublishedDate":"2017-05-18T02:24:00Z","canBeDistributed":"verify","type":"ImageSet"},"lastModified":"2017-05-15T15:54:32.166Z"}`)
 }
 
 func TestBuildMessages_Ok(t *testing.T) {

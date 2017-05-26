@@ -60,9 +60,11 @@ func TestXMLJSONMap_Ok(t *testing.T) {
 				},
 				JSONMember{
 					UUID: "4258f26a-13c5-11e7-9469-afea892e4de3",
+					MaxDisplayWidth: "490px",
 				},
 				JSONMember{
 					UUID: "3ff3b7a8-13c5-11e7-9469-afea892e4de3",
+					MinDisplayWidth: "980px",
 				},
 			},
 			PublishReference:   "tid_test",
@@ -86,9 +88,11 @@ func TestXMLJSONMap_Ok(t *testing.T) {
 				},
 				JSONMember{
 					UUID: "404cf8d9-1b88-4883-8afe-580e5174830d",
+					MaxDisplayWidth: "490px",
 				},
 				JSONMember{
 					UUID: "2acf1caa-8014-48ec-b070-a0ffbc45d1d5",
+					MinDisplayWidth: "980px",
 				},
 			},
 			PublishReference:   "tid_test",
@@ -136,6 +140,7 @@ func TestXMLJSONMap_LessThan3(t *testing.T) {
 			Members: []JSONMember{
 				JSONMember{
 					UUID: "4258f26a-13c5-11e7-9469-afea892e4de3",
+					MaxDisplayWidth: "490px",
 				},
 			},
 			PublishReference:   "tid_test",
@@ -152,20 +157,20 @@ func TestXMLJSONMap_LessThan3(t *testing.T) {
 func TestAppendIfPresent_Present(t *testing.T) {
 	mapper := defaultImageSetToJSONMapper{}
 	members := make([]JSONMember, 0)
-	mapper.appendIfPresent(&members, XMLImage{FileRef: "/FT/Graphics/Online/Z_Undefined/2017/03/timeline-artboards-s.png?uuid=4258f26a-13c5-11e7-9469-afea892e4de3"}, "any")
-	assert.Contains(t, members, JSONMember{UUID: "4258f26a-13c5-11e7-9469-afea892e4de3"})
+	mapper.appendIfPresent(&members, XMLImage{FileRef: "/FT/Graphics/Online/Z_Undefined/2017/03/timeline-artboards-s.png?uuid=4258f26a-13c5-11e7-9469-afea892e4de3"}, "any", "", "980px")
+	assert.Contains(t, members, JSONMember{UUID: "4258f26a-13c5-11e7-9469-afea892e4de3", MinDisplayWidth: "980px"})
 }
 
 func TestAppendIfPresent_NoUuid(t *testing.T) {
 	mapper := defaultImageSetToJSONMapper{}
 	members := make([]JSONMember, 0)
-	mapper.appendIfPresent(&members, XMLImage{FileRef: "/FT/Graphics/Online/Z_Undefined/2017/03/timeline-artboards-s.png"}, "any")
+	mapper.appendIfPresent(&members, XMLImage{FileRef: "/FT/Graphics/Online/Z_Undefined/2017/03/timeline-artboards-s.png"}, "any", "", "980px")
 	assert.Equal(t, len(members), 0)
 }
 
 func TestAppendIfPresent_NoEntry(t *testing.T) {
 	mapper := defaultImageSetToJSONMapper{}
 	members := make([]JSONMember, 0)
-	mapper.appendIfPresent(&members, XMLImage{}, "any")
+	mapper.appendIfPresent(&members, XMLImage{}, "any", "", "980px")
 	assert.Equal(t, len(members), 0)
 }

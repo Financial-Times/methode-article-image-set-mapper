@@ -26,9 +26,9 @@ func (m defaultImageSetToJSONMapper) Map(xmlImageSets []XMLImageSet, attributes 
 	jsonImageSets := make([]JSONImageSet, 0)
 	for _, xmlImageSet := range xmlImageSets {
 		members := make([]JSONMember, 0, 3)
-		m.appendIfPresent(&members, xmlImageSet.ImageMedium, "medium")
-		m.appendIfPresent(&members, xmlImageSet.ImageSmall, "small")
-		m.appendIfPresent(&members, xmlImageSet.ImageLarge, "large")
+		m.appendIfPresent(&members, xmlImageSet.ImageMedium, "medium", "", "")
+		m.appendIfPresent(&members, xmlImageSet.ImageSmall, "small", "490px", "")
+		m.appendIfPresent(&members, xmlImageSet.ImageLarge, "large", "", "980px")
 
 		uuid := uuidutils.NewV3UUID(xmlImageSet.ID)
 		publishedDate, err := time.Parse(methodeDateFormat, attributes.OutputChannels.DIFTcom.DIFTcomLastPublication)
@@ -60,8 +60,8 @@ func (m defaultImageSetToJSONMapper) Map(xmlImageSets []XMLImageSet, attributes 
 	return jsonImageSets, nil
 }
 
-func (m defaultImageSetToJSONMapper) appendIfPresent(members *[]JSONMember, xmlImage XMLImage, memberName string) {
-	jsonMember := m.mapMember(xmlImage, memberName)
+func (m defaultImageSetToJSONMapper) appendIfPresent(members *[]JSONMember, xmlImage XMLImage, memberName string, maxDisplayWidth string, minDisplayWidth string) {
+	jsonMember := m.mapMember(xmlImage, memberName, maxDisplayWidth, minDisplayWidth)
 	if jsonMember == nil {
 		logrus.Warn("")
 	} else {
@@ -69,7 +69,7 @@ func (m defaultImageSetToJSONMapper) appendIfPresent(members *[]JSONMember, xmlI
 	}
 }
 
-func (m defaultImageSetToJSONMapper) mapMember(xmlImage XMLImage, memberName string) *JSONMember {
+func (m defaultImageSetToJSONMapper) mapMember(xmlImage XMLImage, memberName string, maxDisplayWidth string, minDisplayWidth string) *JSONMember {
 	if xmlImage.FileRef == "" {
 		logrus.Warnf("expected member %v is not present.", memberName)
 		return nil
@@ -81,5 +81,7 @@ func (m defaultImageSetToJSONMapper) mapMember(xmlImage XMLImage, memberName str
 	}
 	return &JSONMember{
 		UUID: strings.Split(xmlImage.FileRef, "?uuid=")[1],
+		MaxDisplayWidth: maxDisplayWidth,
+		MinDisplayWidth: minDisplayWidth,
 	}
 }

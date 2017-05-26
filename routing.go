@@ -19,7 +19,7 @@ type routing struct {
 func newRouting(httpMappingHandler HTTPMappingHandler, healthService *healthService) routing {
 	r := routing{
 		httpMappingHandler: httpMappingHandler,
-		healthService: healthService,
+		healthService:      healthService,
 		router:             mux.NewRouter(),
 	}
 	r.routeProductionEndpoints()
@@ -33,10 +33,10 @@ func (r routing) routeProductionEndpoints() {
 
 func (r routing) routeAdminEndpoints() {
 	hc := health.HealthCheck{
-		SystemCode: r.healthService.config.appSystemCode,
-		Name: r.healthService.config.appName,
+		SystemCode:  r.healthService.config.appSystemCode,
+		Name:        r.healthService.config.appName,
 		Description: "Maps inline image-sets from bodies of Methode articles.",
-		Checks: r.healthService.checks,
+		Checks:      r.healthService.checks,
 	}
 	r.router.Path(healthPath).Handler(handlers.MethodHandler{"GET": http.HandlerFunc(health.Handler(hc))})
 	r.router.Path(status.GTGPath).Handler(handlers.MethodHandler{"GET": http.HandlerFunc(status.NewGoodToGoHandler(r.healthService.gtgCheck))})

@@ -10,7 +10,7 @@ import (
 
 const (
 	methodeAuthority  = "http://api.ft.com/system/FTCOM-METHODE"
-	verify            = "verify"
+	canBeDistributedYes            = "yes"
 	methodeDateFormat = "20060102150405"
 	uppDateFormat     = "2006-01-02T15:04:05.000Z0700"
 	imageSetType      = "ImageSet"
@@ -50,7 +50,7 @@ func (m defaultImageSetToJSONMapper) Map(xmlImageSets []XMLImageSet, attributes 
 			},
 			PublishedDate:      publishedDate.Format(uppDateFormat),
 			FirstPublishedDate: firstPublishedDate.Format(uppDateFormat),
-			CanBeDistributed:   verify,
+			CanBeDistributed:   canBeDistributedYes,
 			LastModified:       lastModified,
 			PublishReference:   publishReference,
 			Type:               imageSetType,

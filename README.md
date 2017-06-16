@@ -97,7 +97,7 @@ Content-Length: 1055
     "lastModified": "2017-05-22T02:59:39.195Z",
     "publishedDate": "2017-04-10T03:29:14.000Z",
     "firstPublishedDate": "2017-04-10T03:29:14.000Z",
-    "canBeDistributed": "verify"
+    "canBeDistributed": "yes"
   },
   {
     "uuid": "8c07916c-2577-37b6-b477-291094f992ee",
@@ -122,7 +122,7 @@ Content-Length: 1055
     "lastModified": "2017-05-22T02:59:39.195Z",
     "publishedDate": "2017-04-10T03:29:14.000Z",
     "firstPublishedDate": "2017-04-10T03:29:14.000Z",
-    "canBeDistributed": "verify"
+    "canBeDistributed": "yes"
   }
 ]
 ```

@@ -71,7 +71,7 @@ func TestXMLJSONMap_Ok(t *testing.T) {
 			LastModified:       "2017-05-17T13:46:01.100Z",
 			PublishedDate:      "2017-05-18T13:24:25.000Z",
 			FirstPublishedDate: "2017-05-18T13:24:00.000Z",
-			CanBeDistributed:   "verify",
+			CanBeDistributed:   "yes",
 			Type:               "ImageSet",
 		},
 		JSONImageSet{
@@ -99,7 +99,7 @@ func TestXMLJSONMap_Ok(t *testing.T) {
 			LastModified:       "2017-05-17T13:46:01.100Z",
 			PublishedDate:      "2017-05-18T13:24:25.000Z",
 			FirstPublishedDate: "2017-05-18T13:24:00.000Z",
-			CanBeDistributed:   "verify",
+			CanBeDistributed:   "yes",
 			Type:               "ImageSet",
 		},
 	}
@@ -147,7 +147,7 @@ func TestXMLJSONMap_LessThan3(t *testing.T) {
 			LastModified:       "2017-05-17T13:46:01.100Z",
 			PublishedDate:      "2017-05-18T02:24:25.000Z",
 			FirstPublishedDate: "2017-05-18T02:24:00.000Z",
-			CanBeDistributed:   "verify",
+			CanBeDistributed:   "yes",
 			Type:               "ImageSet",
 		},
 	}

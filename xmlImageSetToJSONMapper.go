@@ -12,7 +12,7 @@ const (
 	methodeAuthority  = "http://api.ft.com/system/FTCOM-METHODE"
 	canBeDistributedYes            = "yes"
 	methodeDateFormat = "20060102150405"
-	uppDateFormat     = "2006-01-02T03:04:05.000Z0700"
+	uppDateFormat     = "2006-01-02T15:04:05.000Z0700"
 	imageSetType      = "ImageSet"
 )
 

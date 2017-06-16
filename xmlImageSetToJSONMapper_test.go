@@ -36,8 +36,8 @@ func TestXMLJSONMap_Ok(t *testing.T) {
 	xmlAttributes := xmlAttributes{
 		OutputChannels: OutputChannels{
 			DIFTcom{
-				DIFTcomLastPublication:    "20170518022425",
-				DIFTcomInitialPublication: "20170518022400",
+				DIFTcomLastPublication:    "20170518132425",
+				DIFTcomInitialPublication: "20170518132400",
 			},
 		},
 	}
@@ -69,8 +69,8 @@ func TestXMLJSONMap_Ok(t *testing.T) {
 			},
 			PublishReference:   "tid_test",
 			LastModified:       "2017-05-17T13:46:01.100Z",
-			PublishedDate:      "2017-05-18T02:24:25.000Z",
-			FirstPublishedDate: "2017-05-18T02:24:00.000Z",
+			PublishedDate:      "2017-05-18T13:24:25.000Z",
+			FirstPublishedDate: "2017-05-18T13:24:00.000Z",
 			CanBeDistributed:   "yes",
 			Type:               "ImageSet",
 		},
@@ -97,8 +97,8 @@ func TestXMLJSONMap_Ok(t *testing.T) {
 			},
 			PublishReference:   "tid_test",
 			LastModified:       "2017-05-17T13:46:01.100Z",
-			PublishedDate:      "2017-05-18T02:24:25.000Z",
-			FirstPublishedDate: "2017-05-18T02:24:00.000Z",
+			PublishedDate:      "2017-05-18T13:24:25.000Z",
+			FirstPublishedDate: "2017-05-18T13:24:00.000Z",
 			CanBeDistributed:   "yes",
 			Type:               "ImageSet",
 		},

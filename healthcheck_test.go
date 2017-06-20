@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"net/http/httptest"
+	"net/http"
 	"testing"
 
 	"github.com/Financial-Times/message-queue-go-producer/producer"
@@ -18,9 +19,12 @@ func initializeHealthCheck(isProducerConnectionHealthy bool, isConsumerConnectio
 }
 
 func TestNewHealthCheck(t *testing.T) {
-	c := &consumer.QueueConfig{}
-	p := &producer.MessageProducerConfig{}
-	hc := NewHealthCheck(p, c, "appSystemCode", "appName")
+	hc := NewHealthCheck(
+		producer.NewMessageProducer(producer.MessageProducerConfig{}),
+		consumer.NewConsumer(consumer.QueueConfig{}, func(m consumer.Message) {}, http.DefaultClient),
+		"appSystemCode",
+		"appName",
+	)
 
 	assert.NotNil(t, hc.consumer)
 	assert.NotNil(t, hc.producer)

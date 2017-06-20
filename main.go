@@ -65,7 +65,7 @@ func main() {
 		a.queue.messageConsumer = messageConsumer
 		a.queue.startConsuming()
 		httpMappingHandler := newHTTPMappingHandler(messageToNativeMapper, imageSetMapper)
-		healthService := NewHealthCheck(&producerConfig, &consumerConfig, a.args.appSystemCode, a.args.appName)
+		healthService := NewHealthCheck(messageProducer, messageConsumer, a.args.appSystemCode, a.args.appName)
 		routing := newRouting(httpMappingHandler, healthService)
 		go routing.listenAndServe(a.args.port)
 		a.waitForSignals()

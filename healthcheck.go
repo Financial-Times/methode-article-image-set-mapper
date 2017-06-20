@@ -1,7 +1,6 @@
 package main
 
 import (
-	"time"
 	"net/http"
 
 	fthealth "github.com/Financial-Times/go-fthealth/v1_1"
@@ -10,27 +9,21 @@ import (
 	"github.com/Financial-Times/service-status-go/gtg"
 )
 
-const (
-	healthPath = "/__health"
-    requestTimeout = 4500
-)
+const healthPath = "/__health"
 
 type HealthCheck struct {
-	consumer consumer.MessageConsumer
-	producer producer.MessageProducer
+	consumer      consumer.MessageConsumer
+	producer      producer.MessageProducer
 	appSystemCode string
 	appName       string
 }
 
-func NewHealthCheck(producerConf *producer.MessageProducerConfig, consumerConf *consumer.QueueConfig, appSystemCode, appName string) *HealthCheck {
-	httpClient := &http.Client{Timeout: requestTimeout * time.Millisecond}
-	p := producer.NewMessageProducerWithHTTPClient(*producerConf, httpClient)
-	c := consumer.NewConsumer(*consumerConf, func(m consumer.Message) {}, httpClient)
+func NewHealthCheck(p producer.MessageProducer, c consumer.MessageConsumer, systemCode, appName string) *HealthCheck {
 	return &HealthCheck{
-		consumer: c,
-		producer: p,
-		appSystemCode: appSystemCode,
-		appName: appName,
+		consumer:      c,
+		producer:      p,
+		appSystemCode: systemCode,
+		appName:       appName,
 	}
 }
 
@@ -89,4 +82,3 @@ func gtgCheck(handler func() (string, error)) gtg.Status {
 	}
 	return gtg.Status{GoodToGo: true}
 }
-

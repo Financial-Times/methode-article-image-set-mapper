@@ -17,12 +17,12 @@ const (
 )
 
 type XMLImageSetToJSONMapper interface {
-	Map(xmlImageSets []XMLImageSet, attributes xmlAttributes, lastModified string, publishReference string) ([]JSONImageSet, error)
+	Map(xmlImageSets []XMLImageSet, articleUuid string, attributes xmlAttributes, lastModified string, publishReference string) ([]JSONImageSet, error)
 }
 
 type defaultImageSetToJSONMapper struct{}
 
-func (m defaultImageSetToJSONMapper) Map(xmlImageSets []XMLImageSet, attributes xmlAttributes, lastModified string, publishReference string) ([]JSONImageSet, error) {
+func (m defaultImageSetToJSONMapper) Map(xmlImageSets []XMLImageSet, articleUuid string, attributes xmlAttributes, lastModified string, publishReference string) ([]JSONImageSet, error) {
 	jsonImageSets := make([]JSONImageSet, 0)
 	for _, xmlImageSet := range xmlImageSets {
 		members := make([]JSONMember, 0, 3)
@@ -30,7 +30,7 @@ func (m defaultImageSetToJSONMapper) Map(xmlImageSets []XMLImageSet, attributes 
 		m.appendIfPresent(&members, xmlImageSet.ImageSmall, "small", "490px", "")
 		m.appendIfPresent(&members, xmlImageSet.ImageLarge, "large", "", "980px")
 
-		uuid := uuidutils.NewV3UUID(xmlImageSet.ID)
+		uuid := uuidutils.NewV3UUID(articleUuid + xmlImageSet.ID)
 		publishedDate, err := time.Parse(methodeDateFormat, attributes.OutputChannels.DIFTcom.DIFTcomLastPublication)
 		if err != nil {
 			return nil, fmt.Errorf("Couldn't parse required methode field published date (DIFTcomLastPublication) %v %v", attributes.OutputChannels.DIFTcom.DIFTcomLastPublication, err)

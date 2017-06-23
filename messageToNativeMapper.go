@@ -12,6 +12,7 @@ type MessageToNativeMapper interface {
 type defaultMessageToNativeMapper struct{}
 
 type NativeContent struct {
+	Uuid       string `json:"uuid"`
 	Type       string `json:"type"`
 	Value      string `json:"value"`
 	Attributes string `json:"attributes"`

@@ -9,11 +9,11 @@ import (
 )
 
 const (
-	methodeAuthority  = "http://api.ft.com/system/FTCOM-METHODE"
-	canBeDistributedYes            = "yes"
-	methodeDateFormat = "20060102150405"
-	uppDateFormat     = "2006-01-02T15:04:05.000Z0700"
-	imageSetType      = "ImageSet"
+	methodeAuthority    = "http://api.ft.com/system/FTCOM-METHODE"
+	canBeDistributedYes = "yes"
+	methodeDateFormat   = "20060102150405"
+	uppDateFormat       = "2006-01-02T15:04:05.000Z0700"
+	imageSetType        = "ImageSet"
 )
 
 type XMLImageSetToJSONMapper interface {
@@ -80,7 +80,7 @@ func (m defaultImageSetToJSONMapper) mapMember(xmlImage XMLImage, memberName str
 		return nil
 	}
 	return &JSONMember{
-		UUID: strings.Split(xmlImage.FileRef, "?uuid=")[1],
+		UUID:            strings.Split(xmlImage.FileRef, "?uuid=")[1],
 		MaxDisplayWidth: maxDisplayWidth,
 		MinDisplayWidth: minDisplayWidth,
 	}

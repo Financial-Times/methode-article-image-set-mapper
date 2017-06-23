@@ -59,11 +59,11 @@ func TestXMLJSONMap_Ok(t *testing.T) {
 					UUID: "41614f4c-13c5-11e7-9469-afea892e4de3",
 				},
 				JSONMember{
-					UUID: "4258f26a-13c5-11e7-9469-afea892e4de3",
+					UUID:            "4258f26a-13c5-11e7-9469-afea892e4de3",
 					MaxDisplayWidth: "490px",
 				},
 				JSONMember{
-					UUID: "3ff3b7a8-13c5-11e7-9469-afea892e4de3",
+					UUID:            "3ff3b7a8-13c5-11e7-9469-afea892e4de3",
 					MinDisplayWidth: "980px",
 				},
 			},
@@ -87,11 +87,11 @@ func TestXMLJSONMap_Ok(t *testing.T) {
 					UUID: "2fe0b459-a23e-452d-a2aa-2e0503982ed2",
 				},
 				JSONMember{
-					UUID: "404cf8d9-1b88-4883-8afe-580e5174830d",
+					UUID:            "404cf8d9-1b88-4883-8afe-580e5174830d",
 					MaxDisplayWidth: "490px",
 				},
 				JSONMember{
-					UUID: "2acf1caa-8014-48ec-b070-a0ffbc45d1d5",
+					UUID:            "2acf1caa-8014-48ec-b070-a0ffbc45d1d5",
 					MinDisplayWidth: "980px",
 				},
 			},
@@ -139,7 +139,7 @@ func TestXMLJSONMap_LessThan3(t *testing.T) {
 			},
 			Members: []JSONMember{
 				JSONMember{
-					UUID: "4258f26a-13c5-11e7-9469-afea892e4de3",
+					UUID:            "4258f26a-13c5-11e7-9469-afea892e4de3",
 					MaxDisplayWidth: "490px",
 				},
 			},

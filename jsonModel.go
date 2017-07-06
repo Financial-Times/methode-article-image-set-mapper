@@ -13,7 +13,7 @@ type JSONImageSet struct {
 }
 
 type JSONMember struct {
-	UUID string `json:"uuid"`
+	UUID            string `json:"uuid"`
 	MinDisplayWidth string `json:"minDisplayWidth,omitempty"`
 	MaxDisplayWidth string `json:"maxDisplayWidth,omitempty"`
 }

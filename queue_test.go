@@ -200,11 +200,11 @@ func TestBuildMessage_Ok(t *testing.T) {
 		Members: []JSONMember{
 			JSONMember{UUID: "8ff1c7f4-a80b-4b8d-8821-b07ff1bfdf87"},
 			JSONMember{
-				UUID: "3bea853a-89b8-4831-80b3-8384e962f5dc",
+				UUID:            "3bea853a-89b8-4831-80b3-8384e962f5dc",
 				MaxDisplayWidth: "490px",
 			},
 			JSONMember{
-				UUID: "c6eeea75-748e-4b1c-a046-6e4c9d81ff25",
+				UUID:            "c6eeea75-748e-4b1c-a046-6e4c9d81ff25",
 				MinDisplayWidth: "980px",
 			},
 		},

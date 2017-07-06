@@ -7,6 +7,7 @@ import (
 
 func TestXMLJSONMap_Ok(t *testing.T) {
 	m := defaultImageSetToJSONMapper{}
+	uuid := "c17e8abe-1df8-11e7-942c-4a4c42b3072e"
 	source := []XMLImageSet{
 		XMLImageSet{
 			ID: "U11603547146784PeC",
@@ -41,17 +42,17 @@ func TestXMLJSONMap_Ok(t *testing.T) {
 			},
 		},
 	}
-	actualImageSets, err := m.Map(source, xmlAttributes, "2017-05-17T13:46:01.100Z", "tid_test")
+	actualImageSets, err := m.Map(source, uuid, xmlAttributes, "2017-05-17T13:46:01.100Z", "tid_test")
 	if err != nil {
 		assert.Error(t, err, "error mapping set")
 	}
 	expectedImageSets := []JSONImageSet{
 		JSONImageSet{
-			UUID: "1376ed33-0d81-3f62-ad62-a9b87b473556",
+			UUID: "d8367364-c56b-3599-8787-08e1784b02ce",
 			Identifiers: []JSONIdentifier{
 				JSONIdentifier{
 					Authority:       "http://api.ft.com/system/FTCOM-METHODE",
-					IdentifierValue: "1376ed33-0d81-3f62-ad62-a9b87b473556",
+					IdentifierValue: "d8367364-c56b-3599-8787-08e1784b02ce",
 				},
 			},
 			Members: []JSONMember{
@@ -59,11 +60,11 @@ func TestXMLJSONMap_Ok(t *testing.T) {
 					UUID: "41614f4c-13c5-11e7-9469-afea892e4de3",
 				},
 				JSONMember{
-					UUID: "4258f26a-13c5-11e7-9469-afea892e4de3",
+					UUID:            "4258f26a-13c5-11e7-9469-afea892e4de3",
 					MaxDisplayWidth: "490px",
 				},
 				JSONMember{
-					UUID: "3ff3b7a8-13c5-11e7-9469-afea892e4de3",
+					UUID:            "3ff3b7a8-13c5-11e7-9469-afea892e4de3",
 					MinDisplayWidth: "980px",
 				},
 			},
@@ -75,11 +76,11 @@ func TestXMLJSONMap_Ok(t *testing.T) {
 			Type:               "ImageSet",
 		},
 		JSONImageSet{
-			UUID: "89e79a93-1bcc-39d6-bcc4-e77b82d3712f",
+			UUID: "84be18d3-4622-3bb1-87b6-33786f12902f",
 			Identifiers: []JSONIdentifier{
 				JSONIdentifier{
 					Authority:       "http://api.ft.com/system/FTCOM-METHODE",
-					IdentifierValue: "89e79a93-1bcc-39d6-bcc4-e77b82d3712f",
+					IdentifierValue: "84be18d3-4622-3bb1-87b6-33786f12902f",
 				},
 			},
 			Members: []JSONMember{
@@ -87,11 +88,11 @@ func TestXMLJSONMap_Ok(t *testing.T) {
 					UUID: "2fe0b459-a23e-452d-a2aa-2e0503982ed2",
 				},
 				JSONMember{
-					UUID: "404cf8d9-1b88-4883-8afe-580e5174830d",
+					UUID:            "404cf8d9-1b88-4883-8afe-580e5174830d",
 					MaxDisplayWidth: "490px",
 				},
 				JSONMember{
-					UUID: "2acf1caa-8014-48ec-b070-a0ffbc45d1d5",
+					UUID:            "2acf1caa-8014-48ec-b070-a0ffbc45d1d5",
 					MinDisplayWidth: "980px",
 				},
 			},
@@ -108,6 +109,7 @@ func TestXMLJSONMap_Ok(t *testing.T) {
 
 func TestXMLJSONMap_LessThan3(t *testing.T) {
 	m := defaultImageSetToJSONMapper{}
+	uuid := "c17e8abe-1df8-11e7-942c-4a4c42b3072e"
 	source := []XMLImageSet{
 		XMLImageSet{
 			ID: "U11603547146784PeC",
@@ -124,22 +126,22 @@ func TestXMLJSONMap_LessThan3(t *testing.T) {
 			},
 		},
 	}
-	actualImageSets, err := m.Map(source, xmlAttributes, "2017-05-17T13:46:01.100Z", "tid_test")
+	actualImageSets, err := m.Map(source, uuid, xmlAttributes, "2017-05-17T13:46:01.100Z", "tid_test")
 	if err != nil {
 		assert.Error(t, err, "error mapping set")
 	}
 	expectedImageSets := []JSONImageSet{
 		JSONImageSet{
-			UUID: "1376ed33-0d81-3f62-ad62-a9b87b473556",
+			UUID: "d8367364-c56b-3599-8787-08e1784b02ce",
 			Identifiers: []JSONIdentifier{
 				JSONIdentifier{
 					Authority:       "http://api.ft.com/system/FTCOM-METHODE",
-					IdentifierValue: "1376ed33-0d81-3f62-ad62-a9b87b473556",
+					IdentifierValue: "d8367364-c56b-3599-8787-08e1784b02ce",
 				},
 			},
 			Members: []JSONMember{
 				JSONMember{
-					UUID: "4258f26a-13c5-11e7-9469-afea892e4de3",
+					UUID:            "4258f26a-13c5-11e7-9469-afea892e4de3",
 					MaxDisplayWidth: "490px",
 				},
 			},

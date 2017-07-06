@@ -50,7 +50,7 @@ type mockedXmlImageSetToJSONMapper struct {
 	mock.Mock
 }
 
-func (m *mockedXmlImageSetToJSONMapper) Map(xmlImageSets []XMLImageSet, attributes xmlAttributes, lastModified string, publishReference string) ([]JSONImageSet, error) {
+func (m *mockedXmlImageSetToJSONMapper) Map(xmlImageSets []XMLImageSet, articleUuid string, attributes xmlAttributes, lastModified string, publishReference string) ([]JSONImageSet, error) {
 	args := m.Called(xmlImageSets)
 	return args.Get(0).([]JSONImageSet), args.Error(1)
 }

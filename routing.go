@@ -1,25 +1,24 @@
 package main
 
 import (
-	health "github.com/Financial-Times/go-fthealth/v1_1"
-	"github.com/Financial-Times/service-status-go/httphandlers"
+	"net/http"
+
 	status "github.com/Financial-Times/service-status-go/httphandlers"
 	"github.com/Sirupsen/logrus"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
-	"net/http"
 )
 
 type routing struct {
 	httpMappingHandler HTTPMappingHandler
-	healthService      *healthService
+	healthCheck        *HealthCheck
 	router             *mux.Router
 }
 
-func newRouting(httpMappingHandler HTTPMappingHandler, healthService *healthService) routing {
+func newRouting(httpMappingHandler HTTPMappingHandler, healthCheck *HealthCheck) routing {
 	r := routing{
 		httpMappingHandler: httpMappingHandler,
-		healthService:      healthService,
+		healthCheck:        healthCheck,
 		router:             mux.NewRouter(),
 	}
 	r.routeProductionEndpoints()
@@ -32,21 +31,15 @@ func (r routing) routeProductionEndpoints() {
 }
 
 func (r routing) routeAdminEndpoints() {
-	hc := health.HealthCheck{
-		SystemCode:  r.healthService.config.appSystemCode,
-		Name:        r.healthService.config.appName,
-		Description: "Maps inline image-sets from bodies of Methode articles.",
-		Checks:      r.healthService.checks,
-	}
-	r.router.Path(healthPath).Handler(handlers.MethodHandler{"GET": http.HandlerFunc(health.Handler(hc))})
-	r.router.Path(status.GTGPath).Handler(handlers.MethodHandler{"GET": http.HandlerFunc(status.NewGoodToGoHandler(r.healthService.gtgCheck))})
+	r.router.Path(healthPath).Handler(handlers.MethodHandler{"GET": http.HandlerFunc(r.healthCheck.Health())})
+	r.router.Path(status.GTGPath).Handler(handlers.MethodHandler{"GET": http.HandlerFunc(status.NewGoodToGoHandler(r.healthCheck.GTG))})
 	r.router.Path(status.BuildInfoPath).Handler(handlers.MethodHandler{"GET": http.HandlerFunc(status.BuildInfoHandler)})
-	r.router.Path(httphandlers.PingPath).HandlerFunc(httphandlers.PingHandler)
+	r.router.Path(status.PingPath).HandlerFunc(status.PingHandler)
 }
 
 func (r routing) listenAndServe(port string) {
 	err := http.ListenAndServe(":"+port, r.router)
 	if err != nil {
-		logrus.Fatalf("Cound't serve http endpoints. %v\n", err)
+		logrus.Fatalf("Couldn't serve http endpoints. %v\n", err)
 	}
 }

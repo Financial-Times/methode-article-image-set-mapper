@@ -9,6 +9,8 @@ image:
   repository: coco/methode-article-image-set-mapper
   pullPolicy: IfNotPresent
 resources:
+  requests:
+    memory: 30Mi
   limits:
     memory: 256Mi
 env:

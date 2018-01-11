@@ -10,9 +10,9 @@ image:
   pullPolicy: IfNotPresent
 resources:
   requests:
-    memory: 30Mi
+    memory: 128Mi
   limits:
-    memory: 256Mi
+    memory: 384Mi
 env:
   Q_GROUP: ""
   Q_READ_TOPIC: ""

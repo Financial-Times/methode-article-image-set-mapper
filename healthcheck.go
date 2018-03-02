@@ -46,7 +46,7 @@ func (h *HealthCheck) readQueueCheck() fthealth.Check {
 	return fthealth.Check{
 		ID:               "read-message-queue-proxy-reachable",
 		Name:             "Read Message Queue Proxy Reachable",
-		Severity:         1,
+		Severity:         2,
 		BusinessImpact:   "Publishing or updating image-sets inside article bodies will not be possible, clients will not see images or image-sets in new content.",
 		TechnicalSummary: "Read message queue proxy is not reachable/healthy",
 		PanicGuide:       "https://dewey.ft.com/methode-article-image-set-mapper.html",
@@ -58,7 +58,7 @@ func (h *HealthCheck) writeQueueCheck() fthealth.Check {
 	return fthealth.Check{
 		ID:               "write-message-queue-proxy-reachable",
 		Name:             "Write Message Queue Proxy Reachable",
-		Severity:         1,
+		Severity:         2,
 		BusinessImpact:   "Publishing or updating image-sets inside article bodies will not be possible, clients will not see images or image-sets in new content.",
 		TechnicalSummary: "Write message queue proxy is not reachable/healthy",
 		PanicGuide:       "https://dewey.ft.com/methode-article-image-set-mapper.html",

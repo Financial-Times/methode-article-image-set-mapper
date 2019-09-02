@@ -87,13 +87,13 @@ func (h defaultHTTPMappingHandler) writeToHTTP(msg string, status int, w http.Re
 	w.WriteHeader(status)
 	_, err := w.Write(httpMsg)
 	if err != nil {
-		logrus.Warn("Couldn't write to response. %v\n", err)
+		logrus.Warnf("Couldn't write to response. %v\n", err)
 	}
 }
 
 func (h defaultHTTPMappingHandler) closeRequestBody(r *http.Request) {
 	err := r.Body.Close()
 	if err != nil {
-		logrus.Warnf("Coulnd't close request body. %v\n", err)
+		logrus.Warnf("Couldn't close request body. %v\n", err)
 	}
 }

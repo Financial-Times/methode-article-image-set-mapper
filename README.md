@@ -10,11 +10,8 @@ Maps inline image-sets from bodies of Methode articles.
 
 Download the source code, dependencies and test dependencies:
 
-    go get -u github.com/kardianos/govendor
     go get -u github.com/Financial-Times/methode-article-image-set-mapper
     cd $GOPATH/src/github.com/Financial-Times/methode-article-image-set-mapper
-    govendor sync
-    govendor test -v -race
     go build
 
 ## Run

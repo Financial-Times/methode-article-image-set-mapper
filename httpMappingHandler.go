@@ -3,11 +3,12 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	trans "github.com/Financial-Times/transactionid-utils-go"
-	"github.com/sirupsen/logrus"
 	"io/ioutil"
 	"net/http"
 	"time"
+
+	trans "github.com/Financial-Times/transactionid-utils-go"
+	"github.com/sirupsen/logrus"
 )
 
 type ErrorMessage struct {

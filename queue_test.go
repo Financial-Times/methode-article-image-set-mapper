@@ -2,12 +2,13 @@ package main
 
 import (
 	"errors"
+	"strings"
+	"testing"
+
 	"github.com/Financial-Times/message-queue-go-producer/producer"
 	consumer "github.com/Financial-Times/message-queue-gonsumer"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
-	"strings"
-	"testing"
 )
 
 func TestOnMessage_Ok(t *testing.T) {

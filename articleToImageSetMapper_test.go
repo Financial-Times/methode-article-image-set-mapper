@@ -1,8 +1,9 @@
 package main
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestAISMap_Ok(t *testing.T) {
@@ -32,7 +33,7 @@ func TestAISMap_Ok(t *testing.T) {
 	`)
 	actualImageSets, err := m.Map(source)
 	assert.NoError(t, err, "Error wasn't expected during mapping")
-	expectedXmlImageSets := []XMLImageSet{
+	expectedXMLImageSets := []XMLImageSet{
 		XMLImageSet{
 			ID:          "U22104508221701xCD",
 			ImageSmall:  XMLImage{FileRef: "/FT/Graphics/Online/Z_Undefined/2017/03/timeline-artboards-s.png?uuid=2ae43059-c725-4e6f-95d7-45f04f2e33b6"},
@@ -46,7 +47,7 @@ func TestAISMap_Ok(t *testing.T) {
 			ImageLarge:  XMLImage{FileRef: "/FT/Graphics/Online/Z_Undefined/2017/03/timeline-artboards-l.png?uuid=0912908c-9f0b-4cc1-be0d-3cce248f4183"},
 		},
 	}
-	assert.Equal(t, expectedXmlImageSets, actualImageSets)
+	assert.Equal(t, expectedXMLImageSets, actualImageSets)
 }
 
 func TestAISMap_NOk(t *testing.T) {

@@ -1,8 +1,9 @@
 package main
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestXMLJSONMap_Ok(t *testing.T) {
@@ -34,7 +35,7 @@ func TestXMLJSONMap_Ok(t *testing.T) {
 			},
 		},
 	}
-	xmlAttributes := xmlAttributes{
+	attributes := xmlAttributes{
 		OutputChannels: OutputChannels{
 			DIFTcom{
 				DIFTcomLastPublication:    "20170518132425",
@@ -42,7 +43,7 @@ func TestXMLJSONMap_Ok(t *testing.T) {
 			},
 		},
 	}
-	actualImageSets, err := m.Map(source, uuid, xmlAttributes, "2017-05-17T13:46:01.100Z", "tid_test")
+	actualImageSets, err := m.Map(source, uuid, attributes, "2017-05-17T13:46:01.100Z", "tid_test")
 	if err != nil {
 		assert.Error(t, err, "error mapping set")
 	}
@@ -118,7 +119,7 @@ func TestXMLJSONMap_LessThan3(t *testing.T) {
 			},
 		},
 	}
-	xmlAttributes := xmlAttributes{
+	attributes := xmlAttributes{
 		OutputChannels: OutputChannels{
 			DIFTcom{
 				DIFTcomLastPublication:    "20170518022425",
@@ -126,7 +127,7 @@ func TestXMLJSONMap_LessThan3(t *testing.T) {
 			},
 		},
 	}
-	actualImageSets, err := m.Map(source, uuid, xmlAttributes, "2017-05-17T13:46:01.100Z", "tid_test")
+	actualImageSets, err := m.Map(source, uuid, attributes, "2017-05-17T13:46:01.100Z", "tid_test")
 	if err != nil {
 		assert.Error(t, err, "error mapping set")
 	}

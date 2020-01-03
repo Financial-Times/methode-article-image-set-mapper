@@ -19,7 +19,7 @@ func (m defaultAttributesMapper) Map(source string) (xmlAttributes, error) {
 	var attributes xmlAttributes
 	err := xml.Unmarshal([]byte(manualUnqouted), &attributes)
 	if err != nil {
-		return xmlAttributes{}, fmt.Errorf("Cound't unmarshall native attributes as XML document. %v", err)
+		return xmlAttributes{}, fmt.Errorf("can't unmarshal native attributes as XML document %v", err)
 	}
 	return attributes, nil
 }

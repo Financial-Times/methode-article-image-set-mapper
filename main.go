@@ -2,23 +2,25 @@ package main
 
 import (
 	"fmt"
+
+	logger "github.com/Financial-Times/go-logger/v2"
 	"github.com/Financial-Times/message-queue-go-producer/producer"
 	consumer "github.com/Financial-Times/message-queue-gonsumer"
-	logger "github.com/Financial-Times/go-logger/v2"
 	"github.com/sirupsen/logrus"
 
-	"github.com/jawher/mow.cli"
 	"net"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
+
+	cli "github.com/jawher/mow.cli"
 )
 
 type app struct {
 	args  args
-	queue defaultQueue
+	queue *defaultQueue
 }
 
 func main() {

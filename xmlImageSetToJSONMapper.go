@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/Financial-Times/uuid-utils-go"
-	"github.com/Sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 	"strings"
 	"time"
 )

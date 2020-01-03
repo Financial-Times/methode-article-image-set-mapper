@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	trans "github.com/Financial-Times/transactionid-utils-go"
-	"github.com/Sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 	"io/ioutil"
 	"net/http"
 	"time"

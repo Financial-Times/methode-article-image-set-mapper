@@ -4,13 +4,14 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"sync"
+	"time"
+
 	"github.com/Financial-Times/message-queue-go-producer/producer"
 	consumer "github.com/Financial-Times/message-queue-gonsumer"
 	trans "github.com/Financial-Times/transactionid-utils-go"
-	"github.com/sirupsen/logrus"
 	gouuid "github.com/satori/go.uuid"
-	"sync"
-	"time"
+	"github.com/sirupsen/logrus"
 )
 
 const (
@@ -18,10 +19,6 @@ const (
 	dateFormat          = "2006-01-02T15:04:05.000Z0700"
 	contentURIBase      = "http://methode-article-image-set-mapper.svc.ft.com/image-set/model/"
 )
-
-type queue interface {
-	onMessage(m consumer.Message)
-}
 
 type defaultQueue struct {
 	messageConsumer   consumer.MessageConsumer
@@ -33,7 +30,7 @@ type defaultQueue struct {
 }
 
 func newQueue(messageConsumer consumer.MessageConsumer, messageProducer producer.MessageProducer,
-	messageToNativeMapper MessageToNativeMapper, imageSetMapper ImageSetMapper) defaultQueue {
+	messageToNativeMapper MessageToNativeMapper, imageSetMapper ImageSetMapper) *defaultQueue {
 	queue := defaultQueue{
 		messageConsumer:       messageConsumer,
 		messageProducer:       messageProducer,
@@ -41,10 +38,10 @@ func newQueue(messageConsumer consumer.MessageConsumer, messageProducer producer
 		imageSetMapper:        imageSetMapper,
 		consumerWaitGroup:     sync.WaitGroup{},
 	}
-	return queue
+	return &queue
 }
 
-func (q defaultQueue) onMessage(m consumer.Message) {
+func (q *defaultQueue) onMessage(m consumer.Message) {
 	tid := m.Headers[trans.TransactionIDHeader]
 	if tid == "" {
 		tid = trans.NewTransactionID()
@@ -98,9 +95,9 @@ func (q defaultQueue) onMessage(m consumer.Message) {
 	}
 }
 
-func (q defaultQueue) buildMessages(imageSets []JSONImageSet, lastModified string, tid string) (map[string]producer.Message, map[string]error) {
-	errs := make(map[string]error, 0)
-	msgs := make(map[string]producer.Message, 0)
+func (q *defaultQueue) buildMessages(imageSets []JSONImageSet, lastModified string, tid string) (map[string]producer.Message, map[string]error) {
+	errs := make(map[string]error)
+	msgs := make(map[string]producer.Message)
 	for _, imageSet := range imageSets {
 		msg, err := q.buildMessage(imageSet, lastModified, tid)
 		if err != nil {
@@ -112,7 +109,7 @@ func (q defaultQueue) buildMessages(imageSets []JSONImageSet, lastModified strin
 	return msgs, errs
 }
 
-func (q defaultQueue) buildMessage(imageSet JSONImageSet, lastModified, pubRef string) (producer.Message, error) {
+func (q *defaultQueue) buildMessage(imageSet JSONImageSet, lastModified, pubRef string) (producer.Message, error) {
 	headers := map[string]string{
 		"X-Request-Id":      pubRef,
 		"Message-Timestamp": lastModified,
@@ -128,12 +125,12 @@ func (q defaultQueue) buildMessage(imageSet JSONImageSet, lastModified, pubRef s
 	}
 	marshaledBody, err := q.unsafeJSONMarshal(body)
 	if err != nil {
-		return producer.Message{}, fmt.Errorf("Couldn't marshall message body to JSON skipping message. transactionId=%v %v", pubRef, body)
+		return producer.Message{}, fmt.Errorf("couldn't marshall message body to JSON skipping message. transactionId=%v %v", pubRef, body)
 	}
 	return producer.Message{Headers: headers, Body: string(marshaledBody)}, nil
 }
 
-func (q defaultQueue) unsafeJSONMarshal(v interface{}) ([]byte, error) {
+func (q *defaultQueue) unsafeJSONMarshal(v interface{}) ([]byte, error) {
 	b, err := json.Marshal(v)
 	if err != nil {
 		return nil, err
@@ -143,7 +140,7 @@ func (q defaultQueue) unsafeJSONMarshal(v interface{}) ([]byte, error) {
 	return b, nil
 }
 
-func (q defaultQueue) startConsuming() {
+func (q *defaultQueue) startConsuming() {
 	q.consumerWaitGroup.Add(1)
 	go func() {
 		q.messageConsumer.Start()
@@ -151,7 +148,7 @@ func (q defaultQueue) startConsuming() {
 	}()
 }
 
-func (q defaultQueue) stop() {
+func (q *defaultQueue) stop() {
 	q.messageConsumer.Stop()
 	q.consumerWaitGroup.Wait()
 }

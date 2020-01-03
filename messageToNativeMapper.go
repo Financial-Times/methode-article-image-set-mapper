@@ -12,7 +12,7 @@ type MessageToNativeMapper interface {
 type defaultMessageToNativeMapper struct{}
 
 type NativeContent struct {
-	Uuid       string `json:"uuid"`
+	UUID       string `json:"uuid"`
 	Type       string `json:"type"`
 	Value      string `json:"value"`
 	Attributes string `json:"attributes"`
@@ -22,7 +22,7 @@ func (m defaultMessageToNativeMapper) Map(source []byte) (NativeContent, error) 
 	var native NativeContent
 	err := json.Unmarshal(source, &native)
 	if err != nil {
-		return NativeContent{}, fmt.Errorf("Cound't decode native content as JSON document. %v\n", err)
+		return NativeContent{}, fmt.Errorf("couldn't decode native content as JSON document %v", err)
 	}
 	return native, nil
 }

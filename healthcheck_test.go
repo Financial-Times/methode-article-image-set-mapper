@@ -6,9 +6,9 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	logger "github.com/Financial-Times/go-logger/v2"
 	"github.com/Financial-Times/message-queue-go-producer/producer"
 	consumer "github.com/Financial-Times/message-queue-gonsumer"
-	logger "github.com/Financial-Times/go-logger/v2"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -99,7 +99,7 @@ func TestGTGBrokenConsumer(t *testing.T) {
 
 	status := hc.GTG()
 	assert.False(t, status.GoodToGo)
-	assert.Equal(t, "Error connecting to the queue", status.Message)
+	assert.Equal(t, "error connecting to the queue", status.Message)
 }
 
 func TestGTGBrokenProducer(t *testing.T) {
@@ -107,7 +107,7 @@ func TestGTGBrokenProducer(t *testing.T) {
 
 	status := hc.GTG()
 	assert.False(t, status.GoodToGo)
-	assert.Equal(t, "Error connecting to the queue", status.Message)
+	assert.Equal(t, "error connecting to the queue", status.Message)
 }
 
 type mockProducerInstance struct {
@@ -127,7 +127,7 @@ func (p *mockProducerInstance) ConnectivityCheck() (string, error) {
 		return "", nil
 	}
 
-	return "", errors.New("Error connecting to the queue")
+	return "", errors.New("error connecting to the queue")
 }
 
 func (c *mockConsumerInstance) Start() {
@@ -141,5 +141,5 @@ func (c *mockConsumerInstance) ConnectivityCheck() (string, error) {
 		return "", nil
 	}
 
-	return "", errors.New("Error connecting to the queue")
+	return "", errors.New("error connecting to the queue")
 }

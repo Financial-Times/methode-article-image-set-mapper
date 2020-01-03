@@ -3,13 +3,14 @@ package main
 import (
 	"bytes"
 	"errors"
-	trans "github.com/Financial-Times/transactionid-utils-go"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/mock"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
+
+	trans "github.com/Financial-Times/transactionid-utils-go"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 )
 
 func TestHttpHandler_Ok(t *testing.T) {
@@ -43,7 +44,7 @@ func TestHttpHandler_ErrorOnNativeMapper(t *testing.T) {
 	handler := http.HandlerFunc(httpHandler.handle)
 	handler.ServeHTTP(recorder, request)
 	assert.Equal(t, http.StatusUnprocessableEntity, recorder.Code)
-	assert.True(t, strings.Contains(string(recorder.Body.Bytes()), `{"message":"Error mapping native message.`))
+	assert.True(t, strings.Contains(string(recorder.Body.String()), `{"message":"Error mapping native message.`))
 }
 
 func TestHttpHandler_ErrorOnImageSetMapper(t *testing.T) {
@@ -60,5 +61,5 @@ func TestHttpHandler_ErrorOnImageSetMapper(t *testing.T) {
 	handler := http.HandlerFunc(httpHandler.handle)
 	handler.ServeHTTP(recorder, request)
 	assert.Equal(t, http.StatusUnprocessableEntity, recorder.Code)
-	assert.True(t, strings.Contains(string(recorder.Body.Bytes()), `{"message":"Error mapping the given content.`))
+	assert.True(t, strings.Contains(string(recorder.Body.String()), `{"message":"Error mapping the given content.`))
 }

@@ -2,9 +2,10 @@ package main
 
 import (
 	"errors"
+	"testing"
+
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
-	"testing"
 )
 
 func TestISMap_Ok(t *testing.T) {
@@ -12,8 +13,8 @@ func TestISMap_Ok(t *testing.T) {
 	mockedArticleToImageSetMapper.On("Map", mock.MatchedBy(func(source []byte) bool { return true })).Return([]XMLImageSet{}, nil)
 	mockedAttributesMapper := new(mockAttributesMapper)
 	mockedAttributesMapper.On("Map", mock.MatchedBy(func(source string) bool { return true })).Return(xmlAttributes{}, nil)
-	mockedXmlImageSetToJSONMapper := new(mockedXmlImageSetToJSONMapper)
-	expectedJsonImageSets := []JSONImageSet{
+	mockedXMLImageSetToJSONMapper := new(mockedXMLImageSetToJSONMapper)
+	expectedJSONImageSets := []JSONImageSet{
 		JSONImageSet{
 			UUID: "f02fbe32-9e2f-43fb-adbe-388d75ca23a9",
 			Members: []JSONMember{
@@ -47,33 +48,33 @@ func TestISMap_Ok(t *testing.T) {
 			PublishReference: "tid_test",
 		},
 	}
-	mockedXmlImageSetToJSONMapper.On("Map", mock.MatchedBy(func(source []XMLImageSet) bool { return true })).Return(expectedJsonImageSets, nil)
-	m := newImageSetMapper(mockedArticleToImageSetMapper, mockedAttributesMapper, mockedXmlImageSetToJSONMapper)
-	source := NativeContent{Uuid: "c17e8abe-1df8-11e7-942c-4a4c42b3072e", Type: compoundStory, Value: "PGRvYz48L2RvYz4="}
+	mockedXMLImageSetToJSONMapper.On("Map", mock.MatchedBy(func(source []XMLImageSet) bool { return true })).Return(expectedJSONImageSets, nil)
+	m := newImageSetMapper(mockedArticleToImageSetMapper, mockedAttributesMapper, mockedXMLImageSetToJSONMapper)
+	source := NativeContent{UUID: "c17e8abe-1df8-11e7-942c-4a4c42b3072e", Type: compoundStory, Value: "PGRvYz48L2RvYz4="}
 	actualImageSets, err := m.Map(source, "2017-05-17T13:46:01.100Z", "tid_test")
 	assert.NoError(t, err, "Error wasn't expected during mapping")
-	assert.Equal(t, expectedJsonImageSets, actualImageSets)
+	assert.Equal(t, expectedJSONImageSets, actualImageSets)
 }
 
-func TestISMap_ErrorInvalidUuid(t *testing.T) {
+func TestISMap_ErrorInvalidUUID(t *testing.T) {
 	m := newImageSetMapper(nil, nil, nil)
-	source := NativeContent{Uuid: "1234", Type: compoundStory, Value: "PGRvYz48L2RvYz4="}
+	source := NativeContent{UUID: "1234", Type: compoundStory, Value: "PGRvYz48L2RvYz4="}
 	_, err := m.Map(source, "2017-05-17T13:46:01.100Z", "tid_test")
 	assert.Error(t, err, "Error was expected during UUID validation")
 }
 
 func TestISMap_ErrorBase64(t *testing.T) {
 	m := newImageSetMapper(nil, nil, nil)
-	source := NativeContent{Uuid: "c17e8abe-1df8-11e7-942c-4a4c42b3072e", Type: compoundStory, Value: "***"}
+	source := NativeContent{UUID: "c17e8abe-1df8-11e7-942c-4a4c42b3072e", Type: compoundStory, Value: "***"}
 	_, err := m.Map(source, "2017-05-17T13:46:01.100Z", "tid_test")
 	assert.Error(t, err, "Error was expected during base64 decoding")
 }
 
-func TestISMap_ErrorXmlMapping(t *testing.T) {
+func TestISMap_ErrorXMLMapping(t *testing.T) {
 	mockedArticleToImageSetMapper := new(mockedArticleToImageSetMapper)
 	mockedArticleToImageSetMapper.On("Map", mock.MatchedBy(func(source []byte) bool { return true })).Return([]XMLImageSet{}, errors.New("error mapping article to xml imageSets"))
 	m := newImageSetMapper(mockedArticleToImageSetMapper, nil, nil)
-	source := NativeContent{Uuid: "c17e8abe-1df8-11e7-942c-4a4c42b3072e", Type: compoundStory, Value: "PGRvYz48L2RvYz4="}
+	source := NativeContent{UUID: "c17e8abe-1df8-11e7-942c-4a4c42b3072e", Type: compoundStory, Value: "PGRvYz48L2RvYz4="}
 	_, err := m.Map(source, "2017-05-17T13:46:01.100Z", "tid_test")
 	assert.Error(t, err, "Error was expected during mapping article to xml imageSets")
 }
@@ -81,12 +82,12 @@ func TestISMap_ErrorXmlMapping(t *testing.T) {
 func TestISMap_ErrorAttributesMapping(t *testing.T) {
 	mockedArticleToImageSetMapper := new(mockedArticleToImageSetMapper)
 	mockedArticleToImageSetMapper.On("Map", mock.MatchedBy(func(source []byte) bool { return true })).Return([]XMLImageSet{}, nil)
-	mockedXmlImageSetToJSONMapper := new(mockedXmlImageSetToJSONMapper)
-	mockedXmlImageSetToJSONMapper.On("Map", mock.MatchedBy(func(source []XMLImageSet) bool { return true })).Return([]JSONImageSet{}, nil)
+	mockedXMLImageSetToJSONMapper := new(mockedXMLImageSetToJSONMapper)
+	mockedXMLImageSetToJSONMapper.On("Map", mock.MatchedBy(func(source []XMLImageSet) bool { return true })).Return([]JSONImageSet{}, nil)
 	mockedAttributesMapper := new(mockAttributesMapper)
 	mockedAttributesMapper.On("Map", mock.MatchedBy(func(source string) bool { return true })).Return(xmlAttributes{}, errors.New("error mapping attributes"))
-	m := newImageSetMapper(mockedArticleToImageSetMapper, mockedAttributesMapper, mockedXmlImageSetToJSONMapper)
-	source := NativeContent{Uuid: "c17e8abe-1df8-11e7-942c-4a4c42b3072e", Type: compoundStory, Value: "PGRvYz48L2RvYz4="}
+	m := newImageSetMapper(mockedArticleToImageSetMapper, mockedAttributesMapper, mockedXMLImageSetToJSONMapper)
+	source := NativeContent{UUID: "c17e8abe-1df8-11e7-942c-4a4c42b3072e", Type: compoundStory, Value: "PGRvYz48L2RvYz4="}
 	_, err := m.Map(source, "2017-05-17T13:46:01.100Z", "tid_test")
 	assert.Error(t, err, "Error was expected during mapping xml attributes")
 }
@@ -94,12 +95,12 @@ func TestISMap_ErrorAttributesMapping(t *testing.T) {
 func TestISMap_ErrorJsonMapping(t *testing.T) {
 	mockedArticleToImageSetMapper := new(mockedArticleToImageSetMapper)
 	mockedArticleToImageSetMapper.On("Map", mock.MatchedBy(func(source []byte) bool { return true })).Return([]XMLImageSet{}, nil)
-	mockedXmlImageSetToJSONMapper := new(mockedXmlImageSetToJSONMapper)
-	mockedXmlImageSetToJSONMapper.On("Map", mock.MatchedBy(func(source []XMLImageSet) bool { return true })).Return([]JSONImageSet{}, errors.New("error mapping xml image set to json model"))
+	mockedXMLImageSetToJSONMapper := new(mockedXMLImageSetToJSONMapper)
+	mockedXMLImageSetToJSONMapper.On("Map", mock.MatchedBy(func(source []XMLImageSet) bool { return true })).Return([]JSONImageSet{}, errors.New("error mapping xml image set to json model"))
 	mockedAttributesMapper := new(mockAttributesMapper)
 	mockedAttributesMapper.On("Map", mock.MatchedBy(func(source string) bool { return true })).Return(xmlAttributes{}, nil)
-	m := newImageSetMapper(mockedArticleToImageSetMapper, mockedAttributesMapper, mockedXmlImageSetToJSONMapper)
-	source := NativeContent{Uuid: "c17e8abe-1df8-11e7-942c-4a4c42b3072e", Type: compoundStory, Value: "PGRvYz48L2RvYz4="}
+	m := newImageSetMapper(mockedArticleToImageSetMapper, mockedAttributesMapper, mockedXMLImageSetToJSONMapper)
+	source := NativeContent{UUID: "c17e8abe-1df8-11e7-942c-4a4c42b3072e", Type: compoundStory, Value: "PGRvYz48L2RvYz4="}
 	_, err := m.Map(source, "2017-05-17T13:46:01.100Z", "tid_test")
 	assert.Error(t, err, "Error was expected during mapping xml image set to json model")
 }

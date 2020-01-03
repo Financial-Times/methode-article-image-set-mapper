@@ -3,8 +3,10 @@ package main
 import (
 	"fmt"
 	"github.com/Financial-Times/message-queue-go-producer/producer"
-	"github.com/Financial-Times/message-queue-gonsumer/consumer"
-	"github.com/Sirupsen/logrus"
+	consumer "github.com/Financial-Times/message-queue-gonsumer"
+	logger "github.com/Financial-Times/go-logger/v2"
+	"github.com/sirupsen/logrus"
+
 	"github.com/jawher/mow.cli"
 	"net"
 	"net/http"
@@ -61,7 +63,8 @@ func main() {
 		prettyPrintConfig(consumerConfig, producerConfig)
 		messageProducer := producer.NewMessageProducerWithHTTPClient(producerConfig, &httpClient)
 		a.queue = newQueue(nil, messageProducer, messageToNativeMapper, imageSetMapper)
-		messageConsumer := consumer.NewConsumer(consumerConfig, a.queue.onMessage, &httpClient)
+		l := logger.NewUnstructuredLogger()
+		messageConsumer := consumer.NewConsumer(consumerConfig, a.queue.onMessage, &httpClient, l)
 		a.queue.messageConsumer = messageConsumer
 		a.queue.startConsuming()
 		httpMappingHandler := newHTTPMappingHandler(messageToNativeMapper, imageSetMapper)

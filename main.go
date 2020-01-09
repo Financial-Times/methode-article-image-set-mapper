@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-
 	logger "github.com/Financial-Times/go-logger/v2"
 	"github.com/Financial-Times/message-queue-go-producer/producer"
 	consumer "github.com/Financial-Times/message-queue-gonsumer"
@@ -62,7 +60,6 @@ func main() {
 			Queue:         a.args.writeQueue,
 			Authorization: a.args.authorization,
 		}
-		prettyPrintConfig(consumerConfig, producerConfig)
 		messageProducer := producer.NewMessageProducerWithHTTPClient(producerConfig, &httpClient)
 		a.queue = newQueue(nil, messageProducer, messageToNativeMapper, imageSetMapper)
 		l := logger.NewUnstructuredLogger()
@@ -175,18 +172,4 @@ func (m app) waitForSignals() {
 	ch := make(chan os.Signal, 1)
 	signal.Notify(ch, syscall.SIGINT, syscall.SIGTERM)
 	<-ch
-}
-
-func prettyPrintConfig(consumerConfig consumer.QueueConfig, producerConfig producer.MessageProducerConfig) string {
-	return fmt.Sprintf("Config: [\n\t%s\n\t%s\n]", prettyPrintConsumerConfig(consumerConfig), prettyPrintProducerConfig(producerConfig))
-}
-
-func prettyPrintConsumerConfig(consumerConfig consumer.QueueConfig) string {
-	return fmt.Sprintf("consumerConfig: [\n\t\taddr: [%v]\n\t\tgroup: [%v]\n\t\ttopic: [%v]\n\t\treadQueueHeader: [%v]\n\t]",
-		consumerConfig.Addrs, consumerConfig.Group, consumerConfig.Topic, consumerConfig.Queue)
-}
-
-func prettyPrintProducerConfig(producerConfig producer.MessageProducerConfig) string {
-	return fmt.Sprintf("producerConfig: [\n\t\taddr: [%v]\n\t\ttopic: [%v]\n\t\twriteQueueHeader: [%v]\n\t]",
-		producerConfig.Addr, producerConfig.Topic, producerConfig.Queue)
 }

@@ -3,8 +3,9 @@ package main
 import (
 	"encoding/base64"
 	"fmt"
-	"github.com/Financial-Times/uuid-utils-go"
-	"github.com/Sirupsen/logrus"
+
+	uuidutils "github.com/Financial-Times/uuid-utils-go"
+	"github.com/sirupsen/logrus"
 )
 
 const compoundStory = "EOM::CompoundStory"
@@ -29,38 +30,38 @@ func newImageSetMapper(articleToImageSetMApper ArticleToImageSetMapper, attribut
 }
 
 func (m defaultImageSetMapper) Map(source NativeContent, lastModified string, publishReference string) ([]JSONImageSet, error) {
-	articleUuid := source.Uuid
-	err := uuidutils.ValidateUUID(articleUuid)
+	articleUUID := source.UUID
+	err := uuidutils.ValidateUUID(articleUUID)
 	if err != nil {
-		msg := fmt.Errorf("No valid UUID found in article. %v\n", err)
+		msg := fmt.Errorf("no valid UUID found in article %v", err)
 		logrus.Warn(msg)
 		return nil, msg
 	}
 
-	valueXml, err := base64.StdEncoding.DecodeString(source.Value)
+	valueXML, err := base64.StdEncoding.DecodeString(source.Value)
 	if err != nil {
-		msg := fmt.Errorf("Cound't decode string as base64. %v\n", err)
+		msg := fmt.Errorf("couldn't decode string as base64 %v", err)
 		logrus.Warn(msg)
 		return nil, msg
 	}
 
-	xmlImageSets, err := m.articleToImageSetMapper.Map(valueXml)
+	XMLImageSets, err := m.articleToImageSetMapper.Map(valueXML)
 	if err != nil {
-		msg := fmt.Errorf("Couldn't parse XML document. %v\n", err)
+		msg := fmt.Errorf("couldn't parse XML document %v", err)
 		logrus.Warn(msg)
 		return nil, msg
 	}
 
 	attributes, err := m.attributesMapper.Map(source.Attributes)
 	if err != nil {
-		msg := fmt.Errorf("Couldn't parse attributes XML. %v\n", err)
+		msg := fmt.Errorf("couldn't parse attributes XML %v", err)
 		logrus.Warn(msg)
 		return nil, msg
 	}
 
-	jsonImageSets, err := m.xmlImageSetToJSONMapper.Map(xmlImageSets, articleUuid, attributes, lastModified, publishReference)
+	jsonImageSets, err := m.xmlImageSetToJSONMapper.Map(XMLImageSets, articleUUID, attributes, lastModified, publishReference)
 	if err != nil {
-		msg := fmt.Errorf("Couldn't map ImageSets from model sourced from XML to model targeted for JSON. %v\n", err)
+		msg := fmt.Errorf("couldn't map ImageSets from model sourced from XML to model targeted for JSON. %v", err)
 		logrus.Error(msg)
 		return nil, msg
 	}

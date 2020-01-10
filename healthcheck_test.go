@@ -2,12 +2,13 @@ package main
 
 import (
 	"errors"
-	"net/http/httptest"
 	"net/http"
+	"net/http/httptest"
 	"testing"
 
+	logger "github.com/Financial-Times/go-logger/v2"
 	"github.com/Financial-Times/message-queue-go-producer/producer"
-	"github.com/Financial-Times/message-queue-gonsumer/consumer"
+	consumer "github.com/Financial-Times/message-queue-gonsumer"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -19,9 +20,10 @@ func initializeHealthCheck(isProducerConnectionHealthy bool, isConsumerConnectio
 }
 
 func TestNewHealthCheck(t *testing.T) {
+	l := logger.NewUnstructuredLogger()
 	hc := NewHealthCheck(
 		producer.NewMessageProducer(producer.MessageProducerConfig{}),
-		consumer.NewConsumer(consumer.QueueConfig{}, func(m consumer.Message) {}, http.DefaultClient),
+		consumer.NewConsumer(consumer.QueueConfig{}, func(m consumer.Message) {}, http.DefaultClient, l),
 		"appSystemCode",
 		"appName",
 	)
@@ -97,7 +99,7 @@ func TestGTGBrokenConsumer(t *testing.T) {
 
 	status := hc.GTG()
 	assert.False(t, status.GoodToGo)
-	assert.Equal(t, "Error connecting to the queue", status.Message)
+	assert.Equal(t, "error connecting to the queue", status.Message)
 }
 
 func TestGTGBrokenProducer(t *testing.T) {
@@ -105,7 +107,7 @@ func TestGTGBrokenProducer(t *testing.T) {
 
 	status := hc.GTG()
 	assert.False(t, status.GoodToGo)
-	assert.Equal(t, "Error connecting to the queue", status.Message)
+	assert.Equal(t, "error connecting to the queue", status.Message)
 }
 
 type mockProducerInstance struct {
@@ -125,7 +127,7 @@ func (p *mockProducerInstance) ConnectivityCheck() (string, error) {
 		return "", nil
 	}
 
-	return "", errors.New("Error connecting to the queue")
+	return "", errors.New("error connecting to the queue")
 }
 
 func (c *mockConsumerInstance) Start() {
@@ -139,5 +141,5 @@ func (c *mockConsumerInstance) ConnectivityCheck() (string, error) {
 		return "", nil
 	}
 
-	return "", errors.New("Error connecting to the queue")
+	return "", errors.New("error connecting to the queue")
 }

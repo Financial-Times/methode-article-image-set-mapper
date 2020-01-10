@@ -2,10 +2,11 @@ package main
 
 import (
 	"fmt"
-	"github.com/Financial-Times/uuid-utils-go"
-	"github.com/Sirupsen/logrus"
 	"strings"
 	"time"
+
+	uuidutils "github.com/Financial-Times/uuid-utils-go"
+	"github.com/sirupsen/logrus"
 )
 
 const (
@@ -17,12 +18,12 @@ const (
 )
 
 type XMLImageSetToJSONMapper interface {
-	Map(xmlImageSets []XMLImageSet, articleUuid string, attributes xmlAttributes, lastModified string, publishReference string) ([]JSONImageSet, error)
+	Map(xmlImageSets []XMLImageSet, articleUUID string, attributes xmlAttributes, lastModified string, publishReference string) ([]JSONImageSet, error)
 }
 
 type defaultImageSetToJSONMapper struct{}
 
-func (m defaultImageSetToJSONMapper) Map(xmlImageSets []XMLImageSet, articleUuid string, attributes xmlAttributes, lastModified string, publishReference string) ([]JSONImageSet, error) {
+func (m defaultImageSetToJSONMapper) Map(xmlImageSets []XMLImageSet, articleUUID string, attributes xmlAttributes, lastModified string, publishReference string) ([]JSONImageSet, error) {
 	jsonImageSets := make([]JSONImageSet, 0)
 	for _, xmlImageSet := range xmlImageSets {
 		members := make([]JSONMember, 0, 3)
@@ -30,14 +31,14 @@ func (m defaultImageSetToJSONMapper) Map(xmlImageSets []XMLImageSet, articleUuid
 		m.appendIfPresent(&members, xmlImageSet.ImageSmall, "small", "490px", "")
 		m.appendIfPresent(&members, xmlImageSet.ImageLarge, "large", "", "980px")
 
-		uuid := uuidutils.NewV3UUID(articleUuid + xmlImageSet.ID)
+		uuid := uuidutils.NewV3UUID(articleUUID + xmlImageSet.ID)
 		publishedDate, err := time.Parse(methodeDateFormat, attributes.OutputChannels.DIFTcom.DIFTcomLastPublication)
 		if err != nil {
-			return nil, fmt.Errorf("Couldn't parse required methode field published date (DIFTcomLastPublication) %v %v", attributes.OutputChannels.DIFTcom.DIFTcomLastPublication, err)
+			return nil, fmt.Errorf("couldn't parse required methode field published date (DIFTcomLastPublication) %v %v", attributes.OutputChannels.DIFTcom.DIFTcomLastPublication, err)
 		}
 		firstPublishedDate, err := time.Parse(methodeDateFormat, attributes.OutputChannels.DIFTcom.DIFTcomInitialPublication)
 		if err != nil {
-			return nil, fmt.Errorf("Couldn't parse required methode field initial published date (DIFTcomInitialPublication) %v %v", attributes.OutputChannels.DIFTcom.DIFTcomInitialPublication, err)
+			return nil, fmt.Errorf("couldn't parse required methode field initial published date (DIFTcomInitialPublication) %v %v", attributes.OutputChannels.DIFTcom.DIFTcomInitialPublication, err)
 		}
 		jsonImageSet := JSONImageSet{
 			UUID:    uuid.String(),

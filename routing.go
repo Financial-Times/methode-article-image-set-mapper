@@ -4,9 +4,9 @@ import (
 	"net/http"
 
 	status "github.com/Financial-Times/service-status-go/httphandlers"
-	"github.com/Sirupsen/logrus"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
+	"github.com/sirupsen/logrus"
 )
 
 type routing struct {

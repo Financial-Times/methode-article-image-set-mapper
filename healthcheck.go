@@ -6,7 +6,7 @@ import (
 
 	fthealth "github.com/Financial-Times/go-fthealth/v1_1"
 	"github.com/Financial-Times/message-queue-go-producer/producer"
-	"github.com/Financial-Times/message-queue-gonsumer/consumer"
+	consumer "github.com/Financial-Times/message-queue-gonsumer"
 	"github.com/Financial-Times/service-status-go/gtg"
 )
 
@@ -49,7 +49,7 @@ func (h *HealthCheck) readQueueCheck() fthealth.Check {
 		Severity:         2,
 		BusinessImpact:   "Publishing or updating image-sets inside article bodies will not be possible, clients will not see images or image-sets in new content.",
 		TechnicalSummary: "Read message queue proxy is not reachable/healthy",
-		PanicGuide:       "https://dewey.ft.com/methode-article-image-set-mapper.html",
+		PanicGuide:       "https://runbooks.in.ft.com/methode-article-image-set-mapper",
 		Checker:          h.consumer.ConnectivityCheck,
 	}
 }
@@ -61,7 +61,7 @@ func (h *HealthCheck) writeQueueCheck() fthealth.Check {
 		Severity:         2,
 		BusinessImpact:   "Publishing or updating image-sets inside article bodies will not be possible, clients will not see images or image-sets in new content.",
 		TechnicalSummary: "Write message queue proxy is not reachable/healthy",
-		PanicGuide:       "https://dewey.ft.com/methode-article-image-set-mapper.html",
+		PanicGuide:       "https://runbooks.in.ft.com/methode-article-image-set-mapper",
 		Checker:          h.producer.ConnectivityCheck,
 	}
 }

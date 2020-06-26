@@ -1,4 +1,4 @@
-# UPP - Splunk Event Reader
+# UPP - Methode Article ImageSet Mapper
 
 Maps inline image-sets from bodies of Methode articles.
 

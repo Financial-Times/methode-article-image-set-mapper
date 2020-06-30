@@ -68,6 +68,7 @@ Response:
 The expected response will be an array of image-sets.
 
 ```
+
 HTTP/1.1 200 OK
 Content-Type: application/json;charset=utf-8
 Date: Mon, 22 May 2017 15:34:15 GMT

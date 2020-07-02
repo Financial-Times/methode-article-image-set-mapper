@@ -2,6 +2,10 @@
 
 Maps inline image-sets from bodies of Methode articles.
 
+## Code
+
+methode-article-image-set-mapper
+
 ## Primary URL
 
 <https://upp-prod-delivery-glb.upp.ft.com/__methode-article-image-set-mapper/>

@@ -2,7 +2,6 @@
 replicaCount: 2
 service:
   name: methode-article-image-set-mapper
-eksCluster: true
 env:
   Q_GROUP: methode-article-image-set-mapper
   Q_READ_TOPIC: NativeCmsPublicationEvents
